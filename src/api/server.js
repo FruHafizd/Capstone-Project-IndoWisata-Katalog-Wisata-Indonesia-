@@ -19,7 +19,4 @@ const start = async () => {
     }
 };
 
-console.log('Daftar route yang tersedia:');
-server.table().forEach(route => console.log(`${route.method.toUpperCase()} ${route.path}`));
-
 start();
