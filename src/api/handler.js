@@ -64,34 +64,67 @@ const formatWisata = (wisata) => ({
 
 // Ambil Semua Wisata di Indonesia 
 const getAllWisata = async (request, h) => {
-  try {
-    const cacheKey = 'all_wisata';
-    const cachedData = cache.get(cacheKey);
-    
-    if(cachedData) return h.response(cachedData).code(200);
-
-    const allPlaces = await fetchAllPlaces({
-      textQuery: "tempat wisata di Indonesia",
-      includedType: "tourist_attraction",
-      languageCode: "id"
-    });
-
-    if(!allPlaces.length) {
-      return h.response({ message: "Tidak ada data wisata" }).code(404);
+    try {
+      const { page = 1, pageSize = 10 } = request.query;
+      const cacheKey = 'all_wisata';
+      let wisataList = cache.get(cacheKey);
+  
+      // Jika tidak ada di cache atau cache expired, fetch data baru
+      if (!wisataList) {
+        console.log('Fetching data dari Google API...');
+        
+        // Batasi waktu fetch maksimal 30 detik
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+  
+        const allPlaces = await fetchAllPlaces({
+          textQuery: "tempat wisata di Indonesia",
+          includedType: "tourist_attraction",
+          languageCode: "id"
+        });
+  
+        clearTimeout(timeout);
+        
+        if (!allPlaces.length) {
+          return h.response({ message: "Tidak ada data wisata" }).code(404);
+        }
+  
+        wisataList = allPlaces.map(formatWisata);
+        cache.set(cacheKey, wisataList);
+      }
+  
+      // Pagination manual
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+      const paginatedData = wisataList.slice(startIndex, endIndex);
+  
+      return h.response({
+        status: 'success',
+        data: paginatedData,
+        meta: {
+          currentPage: Number(page),
+          pageSize: Number(pageSize),
+          totalItems: wisataList.length,
+          totalPages: Math.ceil(wisataList.length / pageSize)
+        }
+      }).code(200);
+  
+    } catch (error) {
+      console.error("Error getAllWisata:", error.message);
+      
+      if (error.name === 'AbortError') {
+        return h.response({ 
+          status: 'error',
+          message: "Fetch data timeout (max 30 detik)"
+        }).code(408);
+      }
+      
+      return h.response({ 
+        status: 'error',
+        message: "Gagal mengambil data wisata",
+        detail: error.response?.data?.error?.message || "Internal Server Error"
+      }).code(500);
     }
-
-    const wisataList = allPlaces.map(formatWisata);
-    cache.set(cacheKey, wisataList);
-    
-    return h.response(wisataList).code(200);
-    
-  } catch (error) {
-    console.error("Error getAllWisata:", error.response?.data || error.message);
-    return h.response({ 
-      message: "Gagal mengambil data wisata",
-      detail: error.response?.data?.error?.message || "Internal Server Error"
-    }).code(500);
-  }
 };
 
 // Cari Wisata 
