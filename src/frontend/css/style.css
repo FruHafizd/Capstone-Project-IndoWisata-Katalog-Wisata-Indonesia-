@@ -42,3 +42,8 @@ body {
 .navbar a:hover, .navbar a.active {
     color: rgba(37, 95, 156, 0.937);
 }
+.container {
+    max-width: 1200px;
+    margin: 90px auto;
+    padding: 10 20px;
+}
