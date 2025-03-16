@@ -14,7 +14,7 @@ body {
     top: 0;
     left: 0;
     width: 101%;
-    height: 80px;
+    height: 100px;
     padding: 70px 7.5%;
     background: transparent;
     display: flex;
@@ -23,12 +23,16 @@ body {
     z-index: 100;
 }
 
-.logo {
+.brand {
     font-size: 20px;
     color: #222;
     text-decoration: none;
     font-weight: 500;
     transition: 0.3s;
+}
+.brand:hover {
+    color: rgba(0, 0, 0, 0.937);
+    font-weight: 700;
 }
 .navbar a {
     font-size: 20px;
@@ -40,7 +44,7 @@ body {
 }
 
 .navbar a:hover, .navbar a.active {
-    color: rgba(37, 95, 156, 0.937);
+    color: rgba(0, 0, 0, 0.937);
     font-weight: 700;
 }
 .container {
@@ -59,11 +63,25 @@ body {
 }
 .opening .title1 h1 {
     width: 70%;
+    padding-bottom: 20px;
     font-size: 70px;
     font-weight: 600;
+    color: #222;
+}
+.opening .title1 p {
+    width: 60%;
+    padding-bottom: 20px;
+    font-size: 20px;
     color: #222;
 }
 .carousel-inner {
     transition: 0.5s;
     border-radius: 10px;
+}
+.dst .title2 h1 {
+    width: 70%;
+    padding-bottom: 20px;
+    font-size: 70px;
+    font-weight: 600;
+    color: #222;
 }
