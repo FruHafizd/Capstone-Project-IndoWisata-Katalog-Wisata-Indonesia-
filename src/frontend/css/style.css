@@ -13,9 +13,9 @@ body {
 .header {
     top: 0;
     left: 0;
-    width: 101%;
+    width: 100%;
     height: 100px;
-    padding: 70px 7.5%;
+    padding: 70px 7.6%;
     background: transparent;
     display: flex;
     justify-content: space-between;
@@ -78,10 +78,43 @@ body {
     transition: 0.5s;
     border-radius: 10px;
 }
+.carousel {
+    padding-bottom: 80px;
+}
 .dst .title2 h1 {
     width: 70%;
-    padding-bottom: 20px;
-    font-size: 70px;
+    padding-bottom: 50px;
+    font-size: 50px;
     font-weight: 600;
     color: #222;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 25px;
+    padding: 0;
+}
+
+.grid-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+.grid-item:hover {
+    transform: scale(1.05);
+}
+.grid-item img {
+    width: 100%;
+    height: auto;
+}
+
+.rating {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: yellow;
 }
