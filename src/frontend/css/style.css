@@ -100,21 +100,36 @@ body {
     border-radius: 8px;
     overflow: hidden;
     background-color: #fff;
-    text-align: center;
+    text-align: justify;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s;
+}
+.grid-item h3 {
+    padding-left: 10px;
+}
+.grid-item p {
+    padding-left: 10px;
 }
 .grid-item:hover {
     transform: scale(1.05);
 }
 .grid-item img {
     width: 100%;
-    height: auto;
+    height: 400px;
+    object-fit: cover;
+    padding-bottom: 20px;
 }
 
+.rating b {
+    color: black;
+    font-size: 15px;
+    font-weight: 10;
+}
 .rating {
     margin-top: 10px;
     font-size: 1.2em;
     color: yellow;
+    padding-bottom: 20px;
+    padding-left: 10px;
 }
