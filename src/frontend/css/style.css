@@ -13,9 +13,9 @@ body {
 .header {
     top: 0;
     left: 0;
-    width: 100%;
+    width: 101%;
     height: 80px;
-    padding: 20px 7.5%;
+    padding: 70px 7.5%;
     background: transparent;
     display: flex;
     justify-content: space-between;
@@ -24,10 +24,11 @@ body {
 }
 
 .logo {
-    font-size: 30px;
+    font-size: 20px;
     color: #222;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
+    transition: 0.3s;
 }
 .navbar a {
     font-size: 20px;
@@ -40,11 +41,27 @@ body {
 
 .navbar a:hover, .navbar a.active {
     color: rgba(37, 95, 156, 0.937);
+    font-weight: 700;
 }
 .container {
-    margin: 20px auto;
+    margin: 70px auto;
     max-width: 1100px;
     padding: 12px 18px;
+}
+.opening {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.title1 {
+    width: 100%;
+}
+.opening .title1 h1 {
+    width: 70%;
+    font-size: 70px;
+    font-weight: 600;
+    color: #222;
 }
 .carousel-inner {
     transition: 0.5s;
