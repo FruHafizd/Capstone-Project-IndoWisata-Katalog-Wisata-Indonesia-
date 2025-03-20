@@ -13,6 +13,27 @@ const getHeaders = (fields) => ({
   'X-Goog-FieldMask': fields.join(',')
 });
 
+// Helper untuk menentukan kategori berdasarkan types
+const determineCategory = (types) => {
+  const categoryMapping = {
+    ALAM: ['natural_feature', 'park', 'beach', 'hiking_area', 'campground', 'forest', 'mountain', 'hill', 'geographical_feature'],
+    SEJARAH: ['museum', 'art_gallery', 'historical_landmark', 'monument', 'archaeological_site', 'history_museum'],
+    KELUARGA: ['amusement_park', 'zoo', 'aquarium', 'theme_park', 'water_park', 'family_entertainment_center'],
+    KULINER: ['restaurant', 'cafe', 'food', 'bakery', 'meal_takeaway', 'meal_delivery', 'bar', 'bistro'],
+    LAINNYA: ['tourist_attraction', 'point_of_interest', 'establishment', 'place_of_worship', 'other']
+  };
+
+  // Urutan pengecekan: KELUARGA → ALAM → SEJARAH → KULINER → LAINNYA
+  const categoryOrder = ['KELUARGA', 'ALAM', 'SEJARAH', 'KULINER', 'LAINNYA'];
+
+  for (const category of categoryOrder) {
+    if (types.some(type => categoryMapping[category].includes(type))) {
+      return category;
+    }
+  }
+  return 'LAINNYA';
+};
+
 // Helper untuk mendapatkan URL foto
 const getPhotoUrl = async (photoName) => {
   try {
@@ -38,6 +59,7 @@ const getPhotoUrl = async (photoName) => {
 // Fungsi format wisata dengan gambar
 const formatWisata = async (wisata) => {
   let imageUrl = null;
+  const types = Array.isArray(wisata.types) ? wisata.types : [];
   
   if (wisata.photos && wisata.photos.length > 0) {
     try {
@@ -50,7 +72,7 @@ const formatWisata = async (wisata) => {
   return {
     id: wisata.id,
     name: wisata.displayName?.text || "Nama tidak tersedia",
-    category: wisata.types?.[0]?.replace(/_/g, ' ') || "Wisata Umum",
+    category: determineCategory(types), // Gunakan fungsi pemetaan kategori
     address: wisata.formattedAddress || "Alamat tidak tersedia",
     rating: wisata.rating ? wisata.rating.toFixed(1) : "Belum ada rating",
     location: wisata.location ? {
