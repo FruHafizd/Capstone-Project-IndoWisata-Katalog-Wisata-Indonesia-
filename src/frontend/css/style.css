@@ -220,3 +220,11 @@ body {
 .footer-links li, .category p {
     margin: 5px 0;
 }
+.social-media {
+    display: flex;
+    justify-content: space-between;
+    width: 100px;
+}
+.social-media a {
+    color: #222;
+}
