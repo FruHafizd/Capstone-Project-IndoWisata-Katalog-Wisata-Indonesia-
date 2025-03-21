@@ -9,6 +9,14 @@ const server = Hapi.server({
 
 server.route(wisataRoutes);
 
+server.ext('onPreResponse', (request, h) => {
+    if (request.response.isBoom) {
+      request.response.output.headers['Access-Control-Allow-Origin'] = '*';
+    }
+    request.response.header('Access-Control-Allow-Origin', '*');
+    return h.continue;
+  });
+
 const start = async () => {
     try {
         await server.start();

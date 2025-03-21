@@ -15,6 +15,14 @@ const wisataRoutes = [
         method: 'GET',
         path: '/api/wisata/search',
         handler: wisataHandler.searchWisata
+    },
+    {
+        method: 'GET',
+        path: '/api/wisata/top',
+        handler: wisataHandler.getTopWisata,
+        options: {
+          description: 'Get top 3 wisata berdasarkan rating'
+        }
     }
 ];
 
