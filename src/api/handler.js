@@ -134,7 +134,7 @@ const getAllWisata = async (request, h) => {
       const timeout = setTimeout(() => controller.abort(), 30000);
 
       const allPlaces = await fetchAllPlaces({
-        textQuery: "tempat wisata di Indonesia",
+        textQuery: "tempat wisata di Indonesia (Jawa OR Sumatera OR Sulawesi OR Bali OR Nusa Tenggara OR Maluku OR Papua)",
         includedType: "tourist_attraction",
         languageCode: "id"
       });
@@ -281,7 +281,7 @@ const getTopWisata = async (request, h) => {
     if (!wisataList) {
       console.log('Fetching fresh data...');
       const allPlaces = await fetchAllPlaces({
-        textQuery: "tempat wisata di Indonesia",
+        textQuery: "tempat wisata populer di Indonesia",
         includedType: "tourist_attraction",
         languageCode: "id"
       });
