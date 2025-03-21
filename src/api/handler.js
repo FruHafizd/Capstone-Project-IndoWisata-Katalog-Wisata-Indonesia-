@@ -272,4 +272,51 @@ const getWisataById = async (request, h) => {
   }
 };
 
-module.exports = { getAllWisata, getWisataById, searchWisata };
+const getTopWisata = async (request, h) => {
+  try {
+    const cacheKey = 'all_wisata';
+    let wisataList = cache.get(cacheKey);
+
+    // Jika cache kosong, fetch data baru
+    if (!wisataList) {
+      console.log('Fetching fresh data...');
+      const allPlaces = await fetchAllPlaces({
+        textQuery: "tempat wisata di Indonesia",
+        includedType: "tourist_attraction",
+        languageCode: "id"
+      });
+      wisataList = await Promise.all(allPlaces.map(formatWisata));
+      cache.set(cacheKey, wisataList);
+    }
+
+    // Filter hanya yang memiliki rating numerik
+    const validRatings = wisataList.filter(w => {
+      const num = parseFloat(w.rating);
+      return !isNaN(num) && num > 0;
+    });
+
+    // Sort & ambil 3 teratas
+    const sorted = validRatings.sort((a, b) => {
+      return parseFloat(b.rating) - parseFloat(a.rating);
+    });
+
+    const topThree = sorted.slice(0, 3);
+
+    return h.response({
+      status: 'success',
+      data: topThree
+    }).code(200);
+
+  } catch (error) {
+    console.error("Error getTopWisata:", error);
+    return h.response({ 
+      status: 'error',
+      message: "Gagal mengambil top wisata",
+      detail: error.message
+    }).code(500);
+  }
+};
+
+
+
+module.exports = { getAllWisata, getWisataById, searchWisata, getTopWisata };
