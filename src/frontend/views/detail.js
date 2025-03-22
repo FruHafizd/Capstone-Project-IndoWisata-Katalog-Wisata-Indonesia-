@@ -35,13 +35,19 @@ function render_detail(data) {
             <h1>${data.name || 'N/A'}</h1>
         </div>
         <div class="content">
+            <img src="${data.imageUrl || 'frontend/image/lava.webp'}" alt="${data.name || 'Wisata'}">
+        </div>
+        <div class="content">
             <p><b>Address : </b>${data.address || 'N/A'}</p>
         </div>
         <div class="content">
             <p><b>Rating : </b>${data.rating || 'N/A'} ${convertRatingToStars(data.rating)}</p>
         </div>
         <div class="content">
-            <img src="${data.imageUrl || 'frontend/image/lava.webp'}" alt="${data.name || 'Wisata'}">
+            <p><b>Opening Hours</b></p>
+            <ul>
+                ${data.openingHours.map(hour => `<li>${hour}</li>`).join('')}
+            </ul>
         </div>
         <div class="title2">
             <h1>Map</h1>
