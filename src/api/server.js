@@ -7,15 +7,18 @@ const server = Hapi.server({
     host: 'localhost'
 });
 
-server.route(wisataRoutes);
-
 server.ext('onPreResponse', (request, h) => {
-    if (request.response.isBoom) {
-      request.response.output.headers['Access-Control-Allow-Origin'] = '*';
-    }
-    request.response.header('Access-Control-Allow-Origin', '*');
-    return h.continue;
-  });
+  const response = request.response;
+  if (response.isBoom) {
+    response.output.headers['Access-Control-Allow-Origin'] = '*';
+  }
+  else {
+    response.headers['Access-Control-Allow-Origin'] = '*';
+  }
+  return h.continue;
+});
+
+server.route(wisataRoutes);
 
 const start = async () => {
     try {
