@@ -13,6 +13,43 @@ const getHeaders = (fields) => ({
   'X-Goog-FieldMask': fields.join(',')
 });
 
+// Fungsi umum untuk fetch data dengan pagination
+const fetchAllPlaces = async (params) => {
+  let allPlaces = [];
+  let nextPageToken = null;
+  
+  do {
+    const response = await axios.post(
+      PLACES_API_URL,
+      {
+        ...params,
+        pageToken: nextPageToken,
+        maxResultCount: 100
+      },
+      {
+        headers: getHeaders([
+          'places.id',
+          'places.displayName',
+          'places.types',
+          'places.formattedAddress',
+          'places.rating',
+          'places.location',
+          'places.photos',
+          'nextPageToken'
+        ])
+      }
+    );
+
+    allPlaces = [...allPlaces, ...response.data.places];
+    nextPageToken = response.data.nextPageToken;
+
+    if(nextPageToken) await new Promise(resolve => setTimeout(resolve, 2000));
+    
+  } while(nextPageToken);
+
+  return allPlaces;
+};
+
 // Helper untuk menentukan kategori berdasarkan types
 const determineCategory = (types) => {
   const categoryMapping = {
@@ -263,9 +300,12 @@ const searchWisata = async (request, h) => {
     const cachedData = cache.get(cacheKey);
     
     if(cachedData) return h.response(cachedData).code(200);
-    
-    // Gunakan query pengguna di berbagai provinsi
-    const allPlaces = await fetchDataFromAllRegions(query);
+
+    const allPlaces = await fetchAllPlaces({
+      textQuery: `${query} di Indonesia`,
+      includedType: "tourist_attraction",
+      languageCode: "id"
+    });
 
     if(!allPlaces.length) {
       return h.response({ message: "Hasil pencarian tidak ditemukan" }).code(404);
@@ -275,12 +315,9 @@ const searchWisata = async (request, h) => {
       allPlaces.map(async (place) => await formatWisata(place))
     );
     
-    // Acak hasil
-    const shuffledResults = shuffleArray(wisataList);
+    cache.set(cacheKey, wisataList);
     
-    cache.set(cacheKey, shuffledResults);
-    
-    return h.response(shuffledResults).code(200);
+    return h.response(wisataList).code(200);
 
   } catch (error) {
     console.error("Error searchWisata:", error.response?.data || error.message);
