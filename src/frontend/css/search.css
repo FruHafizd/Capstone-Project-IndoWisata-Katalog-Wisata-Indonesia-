@@ -93,7 +93,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     background-color: #fff;
-    text-align: justify;
+    text-align: left;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s;
@@ -120,10 +120,13 @@ body {
     font-size: 15px;
     font-weight: 10;
 }
+.checked {
+    color: orange;
+}
 .rating {
     margin-top: 10px;
     font-size: 1.2em;
-    color: yellow;
+    color: rgb(0, 0, 0);
     padding-bottom: 20px;
     padding-left: 10px;
 }

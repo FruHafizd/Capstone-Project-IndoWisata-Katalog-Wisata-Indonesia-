@@ -1,7 +1,7 @@
 const api_all = "http://localhost:3000/api/wisata";
 
 async function fetch_all() {
-    const container = document.querySelector('.grid-container');
+    const container = document.querySelector('#grid-container');
     container.innerHTML = "<p>Memuat data wisata...</p>";
 
     try {
@@ -24,11 +24,23 @@ async function fetch_all() {
 
 function convertRatingToStars(rating) {
     const numericRating = parseFloat(rating) || 0; // Konversi ke angka
-    const fullStars = Math.floor(numericRating);
-    const halfStar = numericRating % 1 >= 0.5 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
+    const fullStars = Math.floor(numericRating); // Bintang penuh
+    const halfStar = numericRating % 1 >= 0.5 ? 1 : 0; // Setengah bintang
+    const emptyStars = 5 - fullStars - halfStar; // Bintang kosong
 
-    return '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(emptyStars);
+    // Ikon bintang penuh
+    const fullStarIcon = '<span class="fa fa-star checked"></span>';
+    // Ikon setengah bintang
+    const halfStarIcon = '<span class="fa fa-star-half-alt checked"></span>';
+    // Ikon bintang kosong
+    const emptyStarIcon = '<span class="fa fa-star"></span>';
+
+    // Gabungkan ikon bintang
+    const stars = fullStarIcon.repeat(fullStars) + 
+                 (halfStar ? halfStarIcon : '') + 
+                 emptyStarIcon.repeat(emptyStars);
+
+    return stars;
 }
 
 function render_all(data = []) {
@@ -40,7 +52,7 @@ function render_all(data = []) {
 
     container.innerHTML = data.map(item => 
         `
-        <div class="grid-item">
+        <div class="grid-item" data-id="${item.id}">
             <img src="${item.imageUrl}" alt="${item.name || 'Wisata'}">
             <h3>${item.name || 'N/A'}</h3>
             <div class="rating"><b>${item.rating || 'N/A'}</b> ${convertRatingToStars(item.rating)}</div>
