@@ -20,6 +20,7 @@ async function fetch_wisata_detail(id) {
         console.log("Respons API:", result); // <-- Debugging
         render_detail(result);
         initMap(result);
+        initialize(result);
     } catch (error) {
         console.error(error);
         container.innerHTML = `<p>Gagal memuat detail wisata. Error: ${error.message}</p>`;
@@ -53,6 +54,10 @@ function render_detail(data) {
             <h1>Map</h1>
         </div>
         <div id="map"class="map"></div>
+        <div class="title2">
+            <h1>Street View</h1>
+        </div>
+        <div id="pano" class="pano"></div>
     `;
 
     // Isi detail-container dengan template HTML
@@ -80,6 +85,27 @@ function convertRatingToStars(rating) {
 
     return stars;
 }
+
+function initialize(data) {
+    const fenway = { lat: data.location.lat, lng: data.location.lng };
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: fenway,
+      zoom: 14,
+    });
+    const panorama = new google.maps.StreetViewPanorama(
+      document.getElementById("pano"),
+      {
+        position: fenway,
+        pov: {
+          heading: 34,
+          pitch: 10,
+        },
+      },
+    );
+  
+    map.setStreetView(panorama);
+}
+  
 
 function initMap(data) {
     var location = { lat: data.location.lat, lng: data.location.lng };
