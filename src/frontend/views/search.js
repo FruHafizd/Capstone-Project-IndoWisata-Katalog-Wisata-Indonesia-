@@ -1,4 +1,37 @@
 const api_all = "http://localhost:3000/api/wisata";
+const api_search = "http://localhost:3000/api/wisata/search";
+
+
+document.querySelector('.search-container form').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent form submission
+    const searchQuery = document.querySelector('.search-box').value.trim();
+    if (searchQuery) {
+        await fetch_search(searchQuery);
+    }
+});
+
+async function fetch_search(query) {
+    const container = document.querySelector('#grid-container');
+    container.innerHTML = "<p>Mencari data wisata...</p>";
+
+    try {
+        const response = await fetch(`${api_search}?query=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+            throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        if (!Array.isArray(result)) {
+            throw new Error("Format data tidak valid: Response bukan array");
+        }
+
+        // Render the search results
+        render_all(result);
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `<p>Gagal memuat hasil pencarian. Error: ${error.message}</p>`;
+    }
+}
 
 async function fetch_all() {
     const container = document.querySelector('#grid-container');
