@@ -8,22 +8,17 @@ const server = Hapi.server({
 });
 
 server.ext('onPreResponse', (request, h) => {
-  if (request.response.isBoom) {
-    request.response.output.headers['Access-Control-Allow-Origin'] = '*';
+  const response = request.response;
+  if (response.isBoom) {
+    response.output.headers['Access-Control-Allow-Origin'] = '*';
   }
-  request.response.header('Access-Control-Allow-Origin', '*');
+  else {
+    response.headers['Access-Control-Allow-Origin'] = '*';
+  }
   return h.continue;
 });
 
 server.route(wisataRoutes);
-
-server.ext('onPreResponse', (request, h) => {
-    if (request.response.isBoom) {
-      request.response.output.headers['Access-Control-Allow-Origin'] = '*';
-    }
-    request.response.header('Access-Control-Allow-Origin', '*');
-    return h.continue;
-  });
 
 const start = async () => {
     try {
