@@ -526,5 +526,221 @@ const getTopWisata = async (request, h) => {
   }
 };
 
+const getWisataByCategory = async (request, h) => {
+  try {
+    const { category } = request.params;
+    const { page = 1, pageSize = 10 } = request.query;
+    
+    // Validasi kategori (case insensitive)
+    const categoryMapping = {
+      ALAM: ['natural_feature', 'park', 'beach', 'hiking_area', 'campground', 'forest', 'mountain', 'hill', 'geographical_feature'],
+      SEJARAH: ['museum', 'art_gallery', 'historical_landmark', 'monument', 'archaeological_site', 'history_museum'],
+      KELUARGA: ['amusement_park', 'zoo', 'aquarium', 'theme_park', 'water_park', 'family_entertainment_center'],
+      KULINER: ['restaurant', 'cafe', 'food', 'bakery', 'meal_takeaway', 'meal_delivery', 'bar', 'bistro'],
+      LAINNYA: ['tourist_attraction', 'point_of_interest', 'establishment', 'place_of_worship', 'other']
+    };
+    
+    const validCategories = Object.keys(categoryMapping);
+    const normalizedCategory = category.toUpperCase();
+    
+    if (!validCategories.includes(normalizedCategory)) {
+      return h.response({ 
+        status: 'error',
+        message: `Kategori tidak valid. Gunakan salah satu dari: ${validCategories.join(', ')}`
+      }).code(400);
+    }
+    
+    // Key untuk cache berdasarkan kategori
+    const cacheKey = `category_${normalizedCategory}`;
+    let filteredWisata = cache.get(cacheKey);
+    
+    if (!filteredWisata) {
+      console.log(`Fetching data wisata untuk kategori: ${normalizedCategory}`);
+      
+      // Gabungkan results dari berbagai sumber
+      let combinedResults = [];
+      
+      // 1. Coba ambil dari cache all_wisata terlebih dahulu
+      let allWisata = cache.get('all_wisata');
+      if (allWisata && allWisata.length > 0) {
+        const fromCache = allWisata.filter(wisata => wisata.category === normalizedCategory);
+        combinedResults.push(...fromCache);
+        console.log(`Mendapatkan ${fromCache.length} data dari cache all_wisata`);
+      }
+      
+      // 2. Selalu cari data langsung berdasarkan kategori
+      // Gunakan semua jenis/tipe dari kategori, tidak hanya 3 pertama
+      const categoryTypes = categoryMapping[normalizedCategory];
+      
+      // Buat query sesuai dengan kategori
+      let categoryQuery;
+      switch (normalizedCategory) {
+        case 'ALAM':
+          categoryQuery = "wisata alam pemandangan";
+          break;
+        case 'SEJARAH':
+          categoryQuery = "wisata sejarah museum";
+          break;
+        case 'KELUARGA':
+          categoryQuery = "wisata keluarga taman hiburan";
+          break;
+        case 'KULINER':
+          categoryQuery = "wisata kuliner makanan";
+          break;
+        default:
+          categoryQuery = "tempat wisata populer";
+      }
+      
+      // Fetch data dengan query kategori spesifik
+      console.log(`Mencari dengan query: ${categoryQuery}`);
+      const categoryPlaces = await fetchDataFromAllRegions(categoryQuery, "tourist_attraction", 10);
+      
+      if (categoryPlaces.length > 0) {
+        const formattedCategoryPlaces = await Promise.all(
+          categoryPlaces.map(async (place) => await formatWisata(place))
+        );
+        
+        // Tambahkan hasil yang sesuai kategori yang diminta
+        const matchingCategoryPlaces = formattedCategoryPlaces.filter(
+          wisata => wisata.category === normalizedCategory
+        );
+        
+        combinedResults.push(...matchingCategoryPlaces);
+        console.log(`Mendapatkan ${matchingCategoryPlaces.length} data dari query kategori`);
+      }
+      
+      // 3. Cari dengan tipe-tipe spesifik jika masih kurang data (kurang dari 15)
+      if (combinedResults.length < 15) {
+        // Gunakan 5 tipe pertama atau semua jika kurang dari 5
+        const typesToQuery = categoryTypes.slice(0, Math.min(5, categoryTypes.length));
+        
+        console.log(`Mencari dengan ${typesToQuery.length} tipe spesifik untuk kategori ${normalizedCategory}`);
+        
+        // Buat promise untuk setiap tipe
+        const typePromises = typesToQuery.map(async (type) => {
+          try {
+            const places = await fetchDataFromAllRegions(`wisata ${type} di indonesia`, type);
+            return places;
+          } catch (error) {
+            console.error(`Error fetching ${type}:`, error.message);
+            return [];
+          }
+        });
+        
+        // Jalankan semua promise secara paralel
+        const typeResults = await Promise.allSettled(typePromises);
+        
+        // Kumpulkan dan proses semua hasil
+        for (const result of typeResults) {
+          if (result.status === 'fulfilled' && result.value.length > 0) {
+            const formattedPlaces = await Promise.all(
+              result.value.map(async (place) => await formatWisata(place))
+            );
+            
+            // Tambahkan semua hasil, terlepas dari kategori yang terdeteksi
+            // Ini untuk memastikan kita mendapatkan data yang cukup
+            combinedResults.push(...formattedPlaces);
+          }
+        }
+        
+        console.log(`Mendapatkan total ${combinedResults.length} data setelah query tipe spesifik`);
+      }
+      
+      // Deduplikasi hasil berdasarkan ID
+      filteredWisata = [];
+      const seenIds = new Set();
+      
+      for (const wisata of combinedResults) {
+        if (!seenIds.has(wisata.id)) {
+          seenIds.add(wisata.id);
+          filteredWisata.push(wisata);
+        }
+      }
+      
+      // 4. Sebagai fallback terakhir, jika masih sangat sedikit data, coba search wisata umum
+      if (filteredWisata.length < 5) {
+        console.log("Data masih sangat sedikit, mencoba pencarian umum...");
+        
+        const fallbackQuery = `tempat wisata ${normalizedCategory.toLowerCase()} populer indonesia`;
+        const fallbackPlaces = await fetchAllPlaces({
+          textQuery: fallbackQuery,
+          includedType: "tourist_attraction",
+          languageCode: "id"
+        });
+        
+        if (fallbackPlaces.length > 0) {
+          const formattedFallbackPlaces = await Promise.all(
+            fallbackPlaces.map(async (place) => await formatWisata(place))
+          );
+          
+          // Tambahkan semua hasil fallback untuk memastikan ada data
+          for (const wisata of formattedFallbackPlaces) {
+            if (!seenIds.has(wisata.id)) {
+              seenIds.add(wisata.id);
+              filteredWisata.push(wisata);
+            }
+          }
+          console.log(`Mendapatkan ${formattedFallbackPlaces.length} data dari pencarian fallback`);
+        }
+      }
+      
+      // Acak urutan untuk menghindari bias
+      filteredWisata = shuffleArray(filteredWisata);
+      
+      // Simpan ke cache dengan waktu yang lebih lama (6 jam)
+      cache.set(cacheKey, filteredWisata, 21600);
+      
+      console.log(`Total ${filteredWisata.length} data wisata kategori ${normalizedCategory} siap ditampilkan`);
+    }
+    
+    // Jika tidak ada data untuk kategori ini
+    if (!filteredWisata || filteredWisata.length === 0) {
+      return h.response({ 
+        status: 'error',
+        message: `Tidak ada data wisata untuk kategori ${normalizedCategory}`
+      }).code(404);
+    }
+    
+    // Pagination
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const paginatedData = filteredWisata.slice(startIndex, endIndex);
+    
+    return h.response({
+      status: 'success',
+      data: paginatedData,
+      meta: {
+        category: normalizedCategory,
+        currentPage: Number(page),
+        pageSize: Number(pageSize),
+        totalItems: filteredWisata.length,
+        totalPages: Math.ceil(filteredWisata.length / pageSize)
+      }
+    }).code(200);
+    
+  } catch (error) {
+    console.error("Error getWisataByCategory:", error.message);
+    
+    if (error.name === 'AbortError') {
+      return h.response({ 
+        status: 'error',
+        message: "Fetch data timeout (max 30 detik)"
+      }).code(408);
+    }
+    
+    return h.response({ 
+      status: 'error',
+      message: "Gagal mengambil data wisata berdasarkan kategori",
+      detail: error.response?.data?.error?.message || "Internal Server Error"
+    }).code(500);
+  }
+};
+
 // Ekspor fungsi-fungsi utama agar dapat digunakan di modul lain
-module.exports = { getAllWisata, getWisataById, searchWisata, getTopWisata };
+module.exports = { 
+  getAllWisata, 
+  getWisataById, 
+  searchWisata, 
+  getTopWisata,
+  getWisataByCategory 
+};

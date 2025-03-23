@@ -23,6 +23,11 @@ const wisataRoutes = [
         options: {
           description: 'Get top 3 wisata berdasarkan rating'
         }
+    },
+    {
+        method: 'GET',
+        path: '/wisata/category/{category}',
+        handler: wisataHandler.getWisataByCategory
     }
 ];
 
