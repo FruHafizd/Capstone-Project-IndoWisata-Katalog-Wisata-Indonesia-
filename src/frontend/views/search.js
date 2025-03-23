@@ -1,13 +1,44 @@
-// import config from './config.js'; // Import konfigurasi API_KEY
+const api_all = "http://localhost:3000/api/wisata";
+const api_search = "http://localhost:3000/api/wisata/search";
 
-const api_top = "http://localhost:3000/api/wisata/top";
 
-async function fetch_top() {
+document.querySelector('.search-container form').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent form submission
+    const searchQuery = document.querySelector('.search-box').value.trim();
+    if (searchQuery) {
+        await fetch_search(searchQuery);
+    }
+});
+
+async function fetch_search(query) {
+    const container = document.querySelector('#grid-container');
+    container.innerHTML = "<p>Mencari data wisata...</p>";
+
+    try {
+        const response = await fetch(`${api_search}?query=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+            throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        if (!Array.isArray(result)) {
+            throw new Error("Format data tidak valid: Response bukan array");
+        }
+
+        // Render the search results
+        render_all(result);
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `<p>Gagal memuat hasil pencarian. Error: ${error.message}</p>`;
+    }
+}
+
+async function fetch_all() {
     const container = document.querySelector('#grid-container');
     container.innerHTML = "<p>Memuat data wisata...</p>";
 
     try {
-        const response = await fetch(api_top);
+        const response = await fetch(api_all);
         if (!response.ok) {
             throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
         }
@@ -26,9 +57,9 @@ async function fetch_top() {
 
 function convertRatingToStars(rating) {
     const numericRating = parseFloat(rating) || 0; // Konversi ke angka
-    const fullStars = Math.floor(numericRating); 
-    const halfStar = numericRating % 1 >= 0.5 ? 1 : 0; 
-    const emptyStars = 5 - fullStars - halfStar; 
+    const fullStars = Math.floor(numericRating); // Bintang penuh
+    const halfStar = numericRating % 1 >= 0.5 ? 1 : 0; // Setengah bintang
+    const emptyStars = 5 - fullStars - halfStar; // Bintang kosong
 
     // Ikon bintang penuh
     const fullStarIcon = '<span class="fa fa-star checked"></span>';
@@ -71,19 +102,5 @@ function render_all(data = []) {
     });
 }
 
-function initMap() {
-    var location = { lat: -6.1252747, lng: 106.8335569 };
-    var map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: location
-    });
-
-    // Tambahkan marker agar lebih jelas
-    var marker = new google.maps.Marker({ position: location, map: map });
-}
-
-window.onload = () => {
-    initMap();
-    fetch_top();
-};
-
+// Gunakan event listener untuk memastikan `fetch_all` dipanggil setelah halaman dimuat
+window.onload = () => fetch_all();

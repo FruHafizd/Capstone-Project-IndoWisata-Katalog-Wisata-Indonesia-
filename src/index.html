@@ -3,9 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indo Wisata</title>
+    <link rel="stylesheet" href="frontend/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Indowisata</title>
 </head>
 <body>
-    <h1>Testing</h1>
+  <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=api&callback=initMap">
+        </script>
+    <header class="header">
+        <a href="#" class="brand">Indowisata</a>
+
+        <nav class="navbar">
+            <a href="" class="active">Home</a>
+            <a href="search.html" id="postLink">Search</a>
+            <a href="" id="account">Category</a>
+        </nav>
+    </header>
+    <main class="container">
+      <div class="opening">
+        <div class="title1">
+          <h1>Discover the Beauty of Indonesian Tourism</h1>
+          <p>Indowisata is your ultimate guide to exploring Indonesia’s breathtaking destinations. Discover top attractions, hidden gems, and travel tips to make your journey unforgettable!</p>
+        </div>
+      </div>
+      <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="frontend/image/1.jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="frontend/image/2.jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="frontend/image/3.jpg" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      <div class="dst">
+        <div class="title2">
+          <h1>Top Destination</h1>
+        </div>
+      </div>
+      <div class="grid-container" id="grid-container">
+            
+      </div>
+    <div id="map" class="map">
+
+    </div>
+    <div class="dst">
+        <div class="title2">
+          <h1>Discover Local Cuisine</h1>
+        </div>
+    </div>
+    <div class="grid-container-cuisine">
+        <div class="grid-item-cuisine">
+            <img src="frontend/image/tali.avif" alt="Candi Borobudur">
+            <h3>Taliwang Chicken</h3>
+            <p>Taliwang Chicken is grilled or fried chicken dish from Lombok, known for its spicy, smoky, and savory taste.</p>
+        </div>
+        <div class="grid-item-cuisine">
+            <img src="frontend/image/tahu.webp" alt="Lava Tour">
+            <h3>Kupat Tahu</h3>
+            <p>Kupat Tahu is a traditional Indonesian dish made of rice cakes served with fried tofu, bean sprouts, and a savory-sweet peanut sauce.</p>
+        </div>
+    </div>
+    </main>
+    <div class="discover">
+      <h2>Discover your inner adventure</h2>
+      <button class="start-now"><a href="search.html" class="link">Start Now</a></button>
+    </div>
+    <footer class="footer">
+      <div class="footer-content">
+          <div class="footer-logo">
+              <p>Indowisata</p>
+              <div class="social-media">
+                <a href=""><i class="fa-brands fa-facebook"></i></a>
+                <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                <a href=""><i class="fa-brands fa-twitter"></i></a>
+                <a href=""><i class="fa-brands fa-instagram"></i></a>
+              </div>
+          </div>
+          <ul class="footer-links">
+              <h3>Home</h3>
+              <p>Top Destination</p>
+              <p>Our map</p>
+              <p>Local Catalog</p>
+          </ul>
+          <div class="search">
+              <h3>Search</h3>
+              <p>Subscribe</p>
+              <p>Our Services</p>
+          </div>
+          <div class="category">
+              <h3>Category</h3>
+              <p>Category Box</p>
+              <p>Our Category</p>
+          </div>
+      </div>
+  </footer>
+    <script type="module" src="frontend/views/home.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+       
 </body>
 </html>
