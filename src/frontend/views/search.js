@@ -104,3 +104,8 @@ function render_all(data = []) {
 
 // Gunakan event listener untuk memastikan `fetch_all` dipanggil setelah halaman dimuat
 window.onload = () => fetch_all();
+
+// hamburger menu
+document.querySelector(".hamburger").addEventListener("click", function() {
+    document.querySelector(".navbar").classList.toggle("active");
+});
