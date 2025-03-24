@@ -82,6 +82,61 @@
                                            required>
                                 </div>
                             </div>
+
+                            <div class="row mb-4">
+                                <!-- Hobby Dropdown -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="hobby" class="form-label">Hobi</label>
+                                  <select class="form-select" id="hobby" name="hobby">
+                                    <option value="">Pilih Hobi</option>
+                                    <option value="hiking">Hiking & Alam Terbuka</option>
+                                    <option value="kuliner">Kuliner</option>
+                                    <option value="fotografi">Fotografi</option>
+                                    <option value="sejarah">Sejarah & Budaya</option>
+                                    <option value="belanja">Belanja</option>
+                                    <option value="bahari">Aktivitas Bahari</option>
+                                  </select>
+                            </div>
+                
+                                <!-- Usia -->
+                            <div class="col-md-6 mb-3">
+                                  <label for="usia" class="form-label">Usia</label>
+                                  <input type="number" 
+                                         class="form-control" 
+                                         id="usia"
+                                         name="usia"
+                                         min="12"
+                                         max="100">
+                                </div>
+                            </div>
+                
+                              <!-- Pekerjaan -->
+                            <div class="mb-4">
+                                <label for="pekerjaan" class="form-label">Pekerjaan</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="pekerjaan"
+                                       name="pekerjaan"
+                                       placeholder="Contoh: Mahasiswa, PNS, dll"
+                                       maxlength="100">
+                            </div>
+                
+                              <!-- Status Nikah Radio -->
+                            <div class="mb-4">
+                                <label class="form-label">Status Pernikahan</label>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="status_nikah" id="menikah" value="Menikah">
+                                  <label class="form-check-label" for="menikah">
+                                    Menikah
+                                  </label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="status_nikah" id="belum_menikah" value="Belum Menikah">
+                                  <label class="form-check-label" for="belum_menikah">
+                                    Belum Menikah
+                                  </label>
+                                </div>
+                            </div>
     
                             <!-- Terms Checkbox -->
                             <div class="form-check mb-4">
@@ -110,47 +165,49 @@
     
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Validasi password
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if(password !== confirmPassword) {
-                alert('Password and confirmation password do not match!');
-                return;
+          e.preventDefault();
+          
+          // Validasi password
+          const password = document.getElementById('password').value;
+          const confirmPassword = document.getElementById('confirmPassword').value;
+          
+          if(password !== confirmPassword) {
+            alert('Password dan konfirmasi password tidak sama!');
+            return;
+          }
+          
+          // Data form
+          const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: password,
+            hobby: document.getElementById('hobby').value,
+            usia: document.getElementById('usia').value,
+            pekerjaan: document.getElementById('pekerjaan').value,
+            status_nikah: document.querySelector('input[name="status_nikah"]:checked')?.value || ''
+          };
+          
+          // Contoh fetch request
+          fetch('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if(data.error) {
+              alert(data.error);
+            } else {
+              window.location.href = '/login.html';
             }
-            
-            // Kirim data ke server
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                password: password
-            };
-            
-            // Contoh fetch request
-            fetch('/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.error) {
-                    alert(data.error);
-                } else {
-                    window.location.href = '/login.html';
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
         });
-    </script>
-    
-   
+      </script>       
 
     <footer class="footer">
       <div class="footer-content">
