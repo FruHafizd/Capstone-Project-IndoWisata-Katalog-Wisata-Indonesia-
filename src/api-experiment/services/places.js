@@ -6,19 +6,14 @@ class PlacesService {
     this._pool = new Pool();
   }
 
-  async addPlace({ 
-    name, 
-    category, 
-    address, 
-    rating, 
-    location, 
-    imageUrl // Region dihapus
-  }) {
+  // Create: Menambahkan tempat wisata baru
+  async addPlace({ name, category, address, rating, location, imageUrl }) {
     const id = `place_${nanoid(16)}`;
     const query = {
-      text: `INSERT INTO places VALUES(
-        $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
-      ) RETURNING id`,
+      text: `INSERT INTO places 
+             (id, name, category, address, rating, location, imageUrl, created_at, updated_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+             RETURNING id`,
       values: [
         id,
         name,
@@ -26,7 +21,7 @@ class PlacesService {
         address,
         rating,
         JSON.stringify(location),
-        imageUrl
+        imageUrl,
       ],
     };
 
@@ -35,21 +30,28 @@ class PlacesService {
   }
 
   async getAllPlaces() {
-    const result = await this._pool.query(`
+    const query = `
       SELECT 
         id, name, category, address, 
         rating::text, location, imageUrl,
         created_at, updated_at
       FROM places
-    `);
-
+    `;
+    const result = await this._pool.query(query);
     return result.rows.map(row => ({
-      ...row,
+      id: row.id,
+      name: row.name,
+      category: row.category,
+      address: row.address,
       rating: row.rating ? parseFloat(row.rating) : null,
-      location: JSON.parse(row.location)
+      location: row.location,  // langsung gunakan objek yang sudah dikonversi
+      imageUrl: row.imageurl,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     }));
   }
-
+  
+  // Read: Mengambil data satu tempat wisata berdasarkan ID
   async getOnePlace(id) {
     const query = {
       text: `
@@ -62,26 +64,26 @@ class PlacesService {
       `,
       values: [id],
     };
-
+  
     const result = await this._pool.query(query);
-    
     if (!result.rows.length) return null;
-
+    
+    const row = result.rows[0];
     return {
-      ...result.rows[0],
-      rating: result.rows[0].rating ? parseFloat(result.rows[0].rating) : null,
-      location: JSON.parse(result.rows[0].location)
+      id: row.id,
+      name: row.name,
+      category: row.category,
+      address: row.address,
+      rating: row.rating ? parseFloat(row.rating) : null,
+      location: row.location,  // langsung gunakan objek location
+      imageUrl: row.imageurl,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     };
   }
 
-  async updatePlace(id, { 
-    name, 
-    category, 
-    address, 
-    rating, 
-    location, 
-    imageUrl // Region dihapus
-  }) {
+  // Update: Memperbarui data tempat wisata
+  async updatePlace(id, { name, category, address, rating, location, imageUrl }) {
     const query = {
       text: `
         UPDATE places SET
@@ -102,14 +104,16 @@ class PlacesService {
         rating,
         JSON.stringify(location),
         imageUrl,
-        id
+        id,
       ],
     };
 
     const result = await this._pool.query(query);
+    if (!result.rows.length) return null;
     return result.rows[0].id;
   }
 
+  // Delete: Menghapus data tempat wisata
   async deletePlace(id) {
     const query = {
       text: 'DELETE FROM places WHERE id = $1 RETURNING id',
@@ -117,6 +121,7 @@ class PlacesService {
     };
 
     const result = await this._pool.query(query);
+    if (!result.rows.length) return null;
     return result.rows[0].id;
   }
 }
