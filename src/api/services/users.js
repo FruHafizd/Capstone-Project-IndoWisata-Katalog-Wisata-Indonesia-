@@ -61,7 +61,7 @@ class UsersService {
         name,
         email,
         hashedPassword,
-        role,
+        role || "user",
         age,
         occupation,
         marital_status,
@@ -72,10 +72,19 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new Error("Gagal menambahkan user");
+      throw new Error("Failed to add user");
     }
 
     return result.rows[0].id;
+  }
+
+  async getUserByEmail(email) {
+    const query = {
+      text: 'SELECT * FROM users WHERE email = $1',
+      values: [email],
+    };
+    const result = await this._pool.query(query);
+    return result.rows[0];
   }
 
   async getUserById(id) {
