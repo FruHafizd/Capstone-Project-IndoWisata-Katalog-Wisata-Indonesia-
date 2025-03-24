@@ -2,6 +2,9 @@ const PlacesHandler = require('./handlers/places');
 const PlacesService = require('./services/places');
 const CategoriesHandler = require('./handlers/categories');
 const CategoriesService = require('./services/categories');
+const UsersHandler = require('./handlers/users');
+const UsersService = require('./services/users');
+
 
 
 // Inisialisasi service dan handler
@@ -9,6 +12,8 @@ const placesService = new PlacesService();
 const placesHandler = new PlacesHandler(placesService);
 const categoriesService = new CategoriesService();
 const categoriesHandler = new CategoriesHandler(categoriesService);
+const usersService = new UsersService();
+const usersHandler = new UsersHandler(usersService);
 
 const wisataRoutes = [
   // Routes for Wisata
@@ -64,6 +69,34 @@ const wisataRoutes = [
     path: '/api/categories/{id}',
     handler: categoriesHandler.deleteCategoryHandler,
   },
+
+  // Route For Users
+  {
+    method: 'POST',
+    path: '/api/users',
+    handler: usersHandler.addUserHandler,
+  },
+  {
+    method: 'GET',
+    path: '/api/users',
+    handler: usersHandler.getAllUsersHandler,
+  },
+  {
+    method: 'GET',
+    path: '/api/users/{id}',
+    handler: usersHandler.getUserByIdHandler,
+  },
+  {
+    method: 'PUT',
+    path: '/api/users/{id}',
+    handler: usersHandler.updateUserHandler,
+  },
+  {
+    method: 'DELETE',
+    path: '/api/users/{id}',
+    handler: usersHandler.deleteUserHandler,
+  },
+  
 ];
 
 module.exports = wisataRoutes;
