@@ -4,7 +4,7 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    nama: {
+    name: {
       type: 'VARCHAR(100)',
       notNull: true,
     },
@@ -21,15 +21,15 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: false,
     },
-    usia: {
+    age: {
       type: 'INTEGER',
       notNull: false,
     },
-    pekerjaan: {
+    occupation: {
       type: 'VARCHAR(100)',
       notNull: false,
     },
-    status_nikah: {
+    marital_status: {
       type: 'VARCHAR(20)',
       notNull: false,
     },
