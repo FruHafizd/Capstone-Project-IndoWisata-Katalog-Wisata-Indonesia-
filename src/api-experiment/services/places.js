@@ -30,23 +30,50 @@ async addPlace({ name, category, address, rating, location, imageUrl }) {
 }
 
   // Read: Mengambil semua data tempat wisata
-async getAllPlaces() {
-    const query = `
-      SELECT 
-        id, name, category_id, address, 
-        rating::text, location, image_url
-      FROM places
-    `;
-    const result = await this._pool.query(query);
-    return result.rows.map(row => ({
-      id: row.id,
-      name: row.name,
-      category: row.category_id,
-      address: row.address,
-      rating: row.rating ? parseFloat(row.rating) : null,
-      location: row.location,
-      imageUrl: row.image_url,
-    }));
+async getAllPlaces({ page = 1, limit = 20 } = {}) {
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 20;
+    const offset = (pageNumber - 1) * limitNumber;
+    
+    // Query untuk mengambil data places
+    const queryItems = {
+      text: `
+        SELECT 
+          id, name, category_id, address, 
+          rating::text, location, image_url
+        FROM places
+        ORDER BY name ASC
+        LIMIT $1 OFFSET $2
+      `,
+      values: [limitNumber, offset],
+    };
+    
+    const itemsResult = await this._pool.query(queryItems);
+    
+    // Query untuk menghitung total data places
+    const queryCount = `SELECT COUNT(*) FROM places`;
+    const countResult = await this._pool.query(queryCount);
+    const totalItems = Number(countResult.rows[0].count);
+    
+    const totalPages = Math.ceil(totalItems / limitNumber);
+    
+    return {
+      data: itemsResult.rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        category: row.category_id,
+        address: row.address,
+        rating: row.rating ? parseFloat(row.rating) : null,
+        location: row.location,
+        imageUrl: row.image_url,
+      })),
+      meta: {
+        page: pageNumber,
+        limit: limitNumber,
+        total: totalItems,
+        totalPages,
+      },
+    };
 }
 
   // Read: Mengambil data satu tempat wisata berdasarkan ID
@@ -119,13 +146,44 @@ async deletePlace(id) {
     return result.rows[0].id;
 }
 
-async searchWisata(queryStr) {
-  const query = {
-    text: `SELECT * FROM places WHERE name ILIKE $1`,
+async searchWisata(queryStr, { page = 1, limit = 20 } = {}) {
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 20;
+  const offset = (pageNumber - 1) * limitNumber;
+
+  const queryItems = {
+    text: `
+      SELECT 
+        id, name, category_id, address, 
+        rating::text, location, image_url
+      FROM places
+      WHERE name ILIKE $1
+      ORDER BY name ASC
+      LIMIT $2 OFFSET $3
+    `,
+    values: [`%${queryStr}%`, limitNumber, offset],
+  };
+
+  const itemsResult = await this._pool.query(queryItems);
+
+  // Menghitung total data hasil pencarian
+  const queryCount = {
+    text: `SELECT COUNT(*) FROM places WHERE name ILIKE $1`,
     values: [`%${queryStr}%`],
   };
-  const result = await this._pool.query(query);
-  return result.rows;
+  const countResult = await this._pool.query(queryCount);
+  const totalItems = Number(countResult.rows[0].count);
+  const totalPages = Math.ceil(totalItems / limitNumber);
+
+  return {
+    data: itemsResult.rows,
+    meta: {
+      page: pageNumber,
+      limit: limitNumber,
+      total: totalItems,
+      totalPages,
+    },
+  };
 }
 
 async getTopWisata() {

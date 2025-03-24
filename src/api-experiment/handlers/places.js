@@ -30,12 +30,23 @@ async addPlaceHandler(request, h) {
 }
 
 async getAllPlacesHandler(request, h) {
-    const places = await this._service.getAllPlaces();
+  try {
+    const { page, limit } = request.query;
+    const result = await this._service.getAllPlaces({ page, limit });
     return h.response({
       status: 'success',
       message: 'Daftar tempat wisata berhasil diperoleh',
-      data: { places },
+      data: {
+        places: result.data,
+        meta: result.meta,
+      },
     }).code(200);
+  } catch (error) {
+    return h.response({
+      status: 'fail',
+      message: error.message,
+    }).code(400);
+  }
 }
 
 async getOnePlaceHandler(request, h) {
@@ -101,12 +112,15 @@ async deletePlaceHandler(request, h) {
 
 async searchWisata(request, h) {
   try {
-    const { query } = request.query; // Mengambil parameter pencarian dari query string
-    const results = await this._service.searchWisata(query);
+    const { query, page, limit } = request.query;
+    const result = await this._service.searchWisata(query, { page, limit });
     return h.response({
       status: 'success',
       message: 'Hasil pencarian tempat wisata',
-      data: { places: results },
+      data: {
+        places: result.data,
+        meta: result.meta,
+      },
     }).code(200);
   } catch (error) {
     return h.response({
