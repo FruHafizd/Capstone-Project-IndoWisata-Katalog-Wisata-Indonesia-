@@ -28,8 +28,12 @@ async function fetch_wisata_detail(id) {
 }
 
 // Fungsi untuk menampilkan detail wisata
-function render_detail(data) {
-    const detailContainer = document.getElementById('detail-container');
+function render_detail(response) {
+    // Ambil objek detail dari response.data.place
+    const data = response.data.place;
+
+    // Jika openingHours tidak tersedia, gunakan array kosong sebagai default
+    const openingHours = Array.isArray(data.openingHours) ? data.openingHours : [];
 
     const html = `
         <div class="title1">
@@ -39,30 +43,29 @@ function render_detail(data) {
             <img src="${data.imageUrl || 'frontend/image/lava.webp'}" alt="${data.name || 'Wisata'}">
         </div>
         <div class="content">
-            <p><b>Address : </b>${data.address || 'N/A'}</p>
+            <p><b>Address: </b>${data.address || 'N/A'}</p>
         </div>
         <div class="content">
-            <p><b>Rating : </b>${data.rating || 'N/A'} ${convertRatingToStars(data.rating)}</p>
+            <p><b>Rating: </b>${data.rating || 'N/A'} ${convertRatingToStars(data.rating)}</p>
         </div>
         <div class="content">
-            <p><b>Opening Hours</b></p>
+            <p><b>Opening Hours:</b></p>
             <ul>
-                ${data.openingHours.map(hour => `<li>${hour}</li>`).join('')}
+                ${openingHours.map(hour => `<li>${hour}</li>`).join('')}
             </ul>
         </div>
         <div class="title2">
             <h1>Map</h1>
         </div>
-        <div id="map"class="map"></div>
+        <div id="map" class="map"></div>
         <div class="title2">
             <h1>Street View</h1>
         </div>
         <div id="pano" class="pano"></div>
     `;
-
-    // Isi detail-container dengan template HTML
-    detailContainer.innerHTML = html;
+    document.getElementById('detail-container').innerHTML = html;
 }
+
 
 // Fungsi untuk mengonversi rating ke bintang
 function convertRatingToStars(rating) {
@@ -86,7 +89,26 @@ function convertRatingToStars(rating) {
     return stars;
 }
 
-function initialize(data) {
+// Fungsi inisialisasi peta dengan marker (Google Maps)
+function initMap(data) {
+    if (!data.location) {
+      console.warn("Location tidak tersedia, peta tidak ditampilkan.");
+      return;
+    }
+    const location = { lat: data.location.lat, lng: data.location.lng };
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 10,
+      center: location
+    });
+    new google.maps.Marker({ position: location, map: map });
+  }
+  
+  // Fungsi inisialisasi Street View (Google Maps)
+  function initialize(data) {
+    if (!data.location) {
+      console.warn("Location tidak tersedia, Street View tidak ditampilkan.");
+      return;
+    }
     const fenway = { lat: data.location.lat, lng: data.location.lng };
     const map = new google.maps.Map(document.getElementById("map"), {
       center: fenway,
@@ -100,23 +122,11 @@ function initialize(data) {
           heading: 34,
           pitch: 10,
         },
-      },
+      }
     );
-  
     map.setStreetView(panorama);
 }
   
-
-function initMap(data) {
-    var location = { lat: data.location.lat, lng: data.location.lng };
-    var map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: location
-    });
-
-    // Tambahkan marker agar lebih jelas
-    var marker = new google.maps.Marker({ position: location, map: map });
-}
 
 window.onload = () => {
     fetch_wisata_detail(wisata);
