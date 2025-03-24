@@ -1,38 +1,29 @@
-require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-const wisataRoutes = require('./routes');
+const routes = require('./routes');
+const PlacesService = require('./services/places');
+const PlacesHandler = require('./handlers/places');
+require('dotenv').config();
 
-const server = Hapi.server({
+const init = async () => {
+  const server = Hapi.server({
+    host: 'localhost',
     port: 3000,
-    host: 'localhost'
-});
-
-server.ext('onPreResponse', (request, h) => {
-  if (request.response.isBoom) {
-    request.response.output.headers['Access-Control-Allow-Origin'] = '*';
-  }
-  request.response.header('Access-Control-Allow-Origin', '*');
-  return h.continue;
-});
-
-server.route(wisataRoutes);
-
-server.ext('onPreResponse', (request, h) => {
-    if (request.response.isBoom) {
-      request.response.output.headers['Access-Control-Allow-Origin'] = '*';
+    routes: {
+      cors: {
+        origin: ['*']
+      }
     }
-    request.response.header('Access-Control-Allow-Origin', '*');
-    return h.continue;
   });
 
-const start = async () => {
-    try {
-        await server.start();
-        console.log(`✅ Server berjalan di ${server.info.uri}`);
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+  // Inisialisasi service dan handler
+  const placesService = new PlacesService();
+  const placesHandler = new PlacesHandler(placesService);
+
+  // Registrasi routes
+  server.route(routes);
+
+  await server.start();
+  console.log(`Server berjalan di: ${server.info.uri}`);
 };
 
-start();
+init();
