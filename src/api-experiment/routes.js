@@ -41,6 +41,24 @@ const wisataRoutes = [
     method: 'DELETE',
     path: '/api/wisata/{id}',
     handler: placesHandler.deletePlaceHandler,
+  }, 
+  {
+    method: 'GET',
+    path: '/api/wisata/search',
+    handler: placesHandler.searchWisata,
+  },
+  {
+    method: 'GET',
+    path: '/api/wisata/top',
+    handler: placesHandler.getTopWisata,
+    options: {
+      description: 'Get top 3 wisata berdasarkan rating',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/api/wisata/category/{category}',
+    handler: placesHandler.getWisataByCategory,
   },
 
   // Routes for Category

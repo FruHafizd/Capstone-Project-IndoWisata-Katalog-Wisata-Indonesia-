@@ -119,6 +119,32 @@ async deletePlace(id) {
     return result.rows[0].id;
 }
 
+async searchWisata(queryStr) {
+  const query = {
+    text: `SELECT * FROM places WHERE name ILIKE $1`,
+    values: [`%${queryStr}%`],
+  };
+  const result = await this._pool.query(query);
+  return result.rows;
+}
+
+async getTopWisata() {
+  const query = {
+    text: `SELECT * FROM places ORDER BY rating DESC LIMIT 3`,
+  };
+  const result = await this._pool.query(query);
+  return result.rows;
+}
+
+async getWisataByCategory(category) {
+  const query = {
+    text: `SELECT * FROM places WHERE category_id = $1`,
+    values: [category],
+  };
+  const result = await this._pool.query(query);
+  return result.rows;
+}
+
 }
 
 module.exports = PlacesService;

@@ -8,6 +8,9 @@ constructor(service) {
     this.getOnePlaceHandler = this.getOnePlaceHandler.bind(this);
     this.updatePlaceHandler = this.updatePlaceHandler.bind(this);
     this.deletePlaceHandler = this.deletePlaceHandler.bind(this);
+    this.searchWisata = this.searchWisata.bind(this);
+    this.getTopWisata = this.getTopWisata.bind(this);
+    this.getWisataByCategory = this.getWisataByCategory.bind(this);
 }
 
 async addPlaceHandler(request, h) {
@@ -94,6 +97,56 @@ async deletePlaceHandler(request, h) {
       status: 'success',
       message: 'Tempat wisata berhasil dihapus',
     }).code(200);
+}
+
+async searchWisata(request, h) {
+  try {
+    const { query } = request.query; // Mengambil parameter pencarian dari query string
+    const results = await this._service.searchWisata(query);
+    return h.response({
+      status: 'success',
+      message: 'Hasil pencarian tempat wisata',
+      data: { places: results },
+    }).code(200);
+  } catch (error) {
+    return h.response({
+      status: 'fail',
+      message: error.message,
+    }).code(400);
+  }
+}
+
+async getTopWisata(request, h) {
+  try {
+    const results = await this._service.getTopWisata();
+    return h.response({
+      status: 'success',
+      message: 'Top 3 tempat wisata berdasarkan rating',
+      data: { places: results },
+    }).code(200);
+  } catch (error) {
+    return h.response({
+      status: 'fail',
+      message: error.message,
+    }).code(400);
+  }
+}
+
+async getWisataByCategory(request, h) {
+  try {
+    const { category } = request.params; // diharapkan kategori dikirim sebagai parameter URL
+    const results = await this._service.getWisataByCategory(category);
+    return h.response({
+      status: 'success',
+      message: `Tempat wisata dengan kategori ${category}`,
+      data: { places: results },
+    }).code(200);
+  } catch (error) {
+    return h.response({
+      status: 'fail',
+      message: error.message,
+    }).code(400);
+  }
 }
 
 }
