@@ -6,6 +6,7 @@ const placesService = new PlacesService();
 const placesHandler = new PlacesHandler(placesService);
 
 const wisataRoutes = [
+  // Routes for Wisata
   // Create
   {
     method: 'POST',
@@ -36,6 +37,9 @@ const wisataRoutes = [
     path: '/api/wisata/{id}',
     handler: placesHandler.deletePlaceHandler,
   },
+
+  // Routes for Category
+
 ];
 
 module.exports = wisataRoutes;

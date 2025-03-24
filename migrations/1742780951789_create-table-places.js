@@ -8,9 +8,11 @@ exports.up = (pgm) => {
         type: 'VARCHAR(100)',
         notNull: true,
       },
-      category: {
+      category_id: {
         type: 'VARCHAR(50)',
         notNull: true,
+        references: 'categories', // mengacu ke tabel categories
+        onDelete: 'cascade',
       },
       address: {
         type: 'TEXT',
