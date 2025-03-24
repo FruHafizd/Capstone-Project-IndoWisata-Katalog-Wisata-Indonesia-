@@ -1,3 +1,5 @@
+const Joi = require('joi');
+const { UserPayloadSchema } = require('../utils/validators/users');
 const PlacesHandler = require('./handlers/places');
 const PlacesService = require('./services/places');
 const CategoriesHandler = require('./handlers/categories');
@@ -91,11 +93,16 @@ const wisataRoutes = [
     method: 'POST',
     path: '/api/users',
     handler: usersHandler.addUserHandler,
+    options: {
+      validate: {
+        payload: UserPayloadSchema
+      }
+    }
   },
   {
     method: 'GET',
     path: '/api/users',
-    handler: usersHandler.getAllUsersHandler,
+    handler: usersHandler.getAllUsersHandler
   },
   {
     method: 'GET',
