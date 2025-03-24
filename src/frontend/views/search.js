@@ -3,7 +3,11 @@ const api_search = "http://localhost:3000/api/wisata/search";
 
 // Mapping kategori: ubah sesuai dengan data kategori Anda
 const categoryMapping = {
-    "cat_LgHRkZdANPDP6ttv": "ALAM"
+    "cat_LgHRkZdANPDP6ttv": "ALAM",
+    "cat_DLQ8lcmAe9GedORf": "KULINER",
+    "cat_NWLIqpq6cnjunZ5X": "SEJARAH",
+    "cat_oAsRjVBqyzmI-tBA": "KELUARGA",
+    "cat_QCJZ9eD5PbAbDIv4": "LAINNYA",
     // Tambahkan mapping lain jika diperlukan
 };
 
