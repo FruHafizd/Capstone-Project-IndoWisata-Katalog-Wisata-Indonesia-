@@ -20,7 +20,6 @@
     "start-dev": "webpack-dev-server --config config/webpack.dev.js ",
     "start-server": "node src/api/server.js",
     "start-server-dev": "nodemon src/api/server.js",
-    "start-server-dev-exp": "nodemon src/api-experiment/server.js",
     "migrate": "node-pg-migrate"
   },
   "dependencies": {
