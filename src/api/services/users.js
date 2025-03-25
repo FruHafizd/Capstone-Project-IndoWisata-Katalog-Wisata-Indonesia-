@@ -9,16 +9,7 @@ class UsersService {
 
   async getAllUsers() {
     const query = {
-      text: `SELECT 
-               id, 
-               name, 
-               email, 
-               role, 
-               age, 
-               occupation, 
-               marital_status, 
-               hobby 
-             FROM users`,
+      text: `SELECT id, name, email, role, age, occupation, marital_status, hobby FROM users`,
     };
     const result = await this._pool.query(query);
     return result.rows;
@@ -36,16 +27,7 @@ class UsersService {
     }
   }
 
-  async addUser({
-    name,
-    email,
-    password,
-    role,
-    age,
-    occupation,
-    marital_status,
-    hobby,
-  }) {
+  async addUser({ name, email, password, role, age, occupation, marital_status, hobby }) {
     await this.verifyNewEmail(email);
 
     const id = `user_${nanoid(16)}`;
@@ -89,25 +71,15 @@ class UsersService {
 
   async getUserById(id) {
     const query = {
-      text: `SELECT 
-        id, 
-        name, 
-        email, 
-        role, 
-        age, 
-        occupation, 
-        marital_status, 
-        hobby 
-        FROM users WHERE id = $1`,
+      text: `SELECT id, name, email, role, age, occupation, marital_status, hobby 
+             FROM users WHERE id = $1`,
       values: [id],
     };
 
     const result = await this._pool.query(query);
-
     if (!result.rowCount) {
       throw new Error("User tidak ditemukan");
     }
-
     return result.rows[0];
   }
 
@@ -116,7 +88,6 @@ class UsersService {
     const fieldValues = [];
     let counter = 1;
 
-    // Build dynamic query
     for (const [key, value] of Object.entries(updatedFields)) {
       if (key === "password" && value) {
         const hashedPassword = await bcrypt.hash(value, 12);
@@ -130,19 +101,14 @@ class UsersService {
     }
 
     const query = {
-      text: `UPDATE users 
-        SET ${fieldNames.join(", ")} 
-        WHERE id = $${counter} 
-        RETURNING id`,
+      text: `UPDATE users SET ${fieldNames.join(", ")} WHERE id = $${counter} RETURNING id`,
       values: [...fieldValues, id],
     };
 
     const result = await this._pool.query(query);
-
     if (!result.rowCount) {
       throw new Error("Gagal memperbarui user");
     }
-
     return result.rows[0].id;
   }
 
@@ -153,11 +119,9 @@ class UsersService {
     };
 
     const result = await this._pool.query(query);
-
     if (!result.rowCount) {
       throw new Error("User tidak ditemukan");
     }
-
     return result.rows[0].id;
   }
 }

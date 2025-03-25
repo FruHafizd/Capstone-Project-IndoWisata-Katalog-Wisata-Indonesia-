@@ -23,7 +23,6 @@ class UsersHandler {
 
   async addUserHandler(request, h) {
     try {
-      // Validasi payload
       const { error, value } = UserPayloadSchema.validate(request.payload);
       if (error) {
         throw new ClientError(error.message, 400);
@@ -64,7 +63,7 @@ class UsersHandler {
             status: "fail",
             message: "Email sudah terdaftar",
           })
-          .code(409); // HTTP 409 Conflict
+          .code(409);
       }
 
       if (error instanceof ClientError) {
@@ -76,7 +75,6 @@ class UsersHandler {
           .code(error.statusCode);
       }
 
-      // Server error
       console.error(error);
       return h
         .response({
