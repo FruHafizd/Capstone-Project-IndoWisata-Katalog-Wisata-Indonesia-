@@ -1,85 +1,127 @@
-const { Pool } = require('pg');
-const { nanoid } = require('nanoid');
-const bcrypt = require('bcrypt');
+const { Pool } = require("pg");
+const { nanoid } = require("nanoid");
+const bcrypt = require("bcrypt");
 
 class UsersService {
-
-constructor() {
+  constructor() {
     this._pool = new Pool();
-}
+  }
 
-  // Create: Menambahkan user baru
-async addUser({ name, email, password, role }) {
-    const id = `user_${nanoid(16)}`;
-    // Hash password dengan bcrypt
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+  async getAllUsers() {
     const query = {
-      text: `INSERT INTO users (id, name, email, password, role)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING id`,
-      values: [id, name, email, hashedPassword, role || 'user'],
+      text: `SELECT id, name, email, role, age, occupation, marital_status, hobby FROM users`,
+    };
+    const result = await this._pool.query(query);
+    return result.rows;
+  }
+
+  async verifyNewEmail(email) {
+    const query = {
+      text: "SELECT email FROM users WHERE email = $1",
+      values: [email],
     };
 
     const result = await this._pool.query(query);
-    return result.rows[0].id;
-}
+    if (result.rowCount > 0) {
+      throw new Error("Email sudah terdaftar");
+    }
+  }
 
-  // Read: Mengambil semua user (tanpa password)
-async getAllUsers() {
-    const query = `SELECT id, name, email, role FROM users`;
-    const result = await this._pool.query(query);
-    return result.rows;
-}
+  async addUser({ name, email, password, role, age, occupation, marital_status, hobby }) {
+    await this.verifyNewEmail(email);
 
-  // Read: Mengambil detail user berdasarkan ID (tanpa password)
-async getUserById(id) {
+    const id = `user_${nanoid(16)}`;
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const query = {
-      text: `SELECT id, name, email, role FROM users WHERE id = $1`,
+      text: `INSERT INTO users 
+        (id, name, email, password, role, age, occupation, marital_status, hobby)
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+        RETURNING id`,
+      values: [
+        id,
+        name,
+        email,
+        hashedPassword,
+        role || "user",
+        age,
+        occupation,
+        marital_status,
+        hobby,
+      ],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new Error("Failed to add user");
+    }
+
+    return result.rows[0].id;
+  }
+
+  async getUserByEmail(email) {
+    const query = {
+      text: 'SELECT * FROM users WHERE email = $1',
+      values: [email],
+    };
+    const result = await this._pool.query(query);
+    return result.rows[0];
+  }
+
+  async getUserById(id) {
+    const query = {
+      text: `SELECT id, name, email, role, age, occupation, marital_status, hobby 
+             FROM users WHERE id = $1`,
       values: [id],
     };
 
     const result = await this._pool.query(query);
-    if (!result.rows.length) return null;
+    if (!result.rowCount) {
+      throw new Error("User tidak ditemukan");
+    }
     return result.rows[0];
-}
+  }
 
-  // Update: Memperbarui data user (jika ada perubahan pada nama, email, password, atau role)
-async updateUser(id, { name, email, password, role }) {
-    let hashedPassword = undefined;
-    if (password) {
-      const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(password, saltRounds);
+  async updateUser(id, updatedFields) {
+    const fieldNames = [];
+    const fieldValues = [];
+    let counter = 1;
+
+    for (const [key, value] of Object.entries(updatedFields)) {
+      if (key === "password" && value) {
+        const hashedPassword = await bcrypt.hash(value, 12);
+        fieldNames.push(`${key} = $${counter}`);
+        fieldValues.push(hashedPassword);
+      } else {
+        fieldNames.push(`${key} = $${counter}`);
+        fieldValues.push(value);
+      }
+      counter++;
     }
 
     const query = {
-      text: `
-        UPDATE users SET
-          name = COALESCE($1, name),
-          email = COALESCE($2, email),
-          password = COALESCE($3, password),
-          role = COALESCE($4, role)
-        WHERE id = $5
-        RETURNING id
-      `,
-      values: [name, email, hashedPassword, role, id],
+      text: `UPDATE users SET ${fieldNames.join(", ")} WHERE id = $${counter} RETURNING id`,
+      values: [...fieldValues, id],
     };
 
     const result = await this._pool.query(query);
-    if (!result.rows.length) return null;
+    if (!result.rowCount) {
+      throw new Error("Gagal memperbarui user");
+    }
     return result.rows[0].id;
-}
+  }
 
-  // Delete: Menghapus user berdasarkan ID
-async deleteUser(id) {
+  async deleteUser(id) {
     const query = {
-      text: `DELETE FROM users WHERE id = $1 RETURNING id`,
+      text: "DELETE FROM users WHERE id = $1 RETURNING id",
       values: [id],
     };
 
     const result = await this._pool.query(query);
-    if (!result.rows.length) return null;
+    if (!result.rowCount) {
+      throw new Error("User tidak ditemukan");
+    }
     return result.rows[0].id;
   }
 }
