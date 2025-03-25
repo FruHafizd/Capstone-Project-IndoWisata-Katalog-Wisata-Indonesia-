@@ -119,6 +119,8 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 25px;
+    justify-content: center;
+    align-items: center;
     padding-bottom: 100px;
 }
 
