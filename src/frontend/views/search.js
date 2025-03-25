@@ -1,3 +1,4 @@
+// Endpoint API
 const api_all = "http://localhost:3000/api/wisata";
 const api_search = "http://localhost:3000/api/wisata/search";
 
@@ -7,22 +8,14 @@ const categoryMapping = {
     "cat_DLQ8lcmAe9GedORf": "KULINER",
     "cat_NWLIqpq6cnjunZ5X": "SEJARAH",
     "cat_oAsRjVBqyzmI-tBA": "KELUARGA",
-    "cat_QCJZ9eD5PbAbDIv4": "LAINNYA",
-    // Tambahkan mapping lain jika diperlukan
+    "cat_QCJZ9eD5PbAbDIv4": "LAINNYA"
 };
 
-// Tangani pencarian melalui form
-document.querySelector('.search-container form').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Mencegah submit default form
-    const searchQuery = document.querySelector('.search-box').value.trim();
-    if (searchQuery) {
-        await fetch_search(searchQuery);
-    }
-});
+// Gunakan container yang sesuai dengan halaman search
+const container = document.querySelector('#grid-container-search');
 
 // Fungsi untuk mengambil data hasil pencarian
 async function fetch_search(query) {
-    const container = document.querySelector('#grid-container');
     container.innerHTML = "<p>Mencari data wisata...</p>";
   
     try {
@@ -42,9 +35,8 @@ async function fetch_search(query) {
     }
 }
   
-// Fungsi untuk mengambil semua data wisata
+// Fungsi untuk mengambil semua data wisata (saat halaman pertama kali dimuat)
 async function fetch_all() {
-    const container = document.querySelector('#grid-container');
     container.innerHTML = "<p>Memuat data wisata...</p>";
   
     try {
@@ -81,7 +73,6 @@ function convertRatingToStars(rating) {
   
 // Fungsi untuk merender data wisata ke dalam grid
 function render_all(data = []) {
-    const container = document.querySelector('.grid-container');
     if (data.length === 0) {
       container.innerHTML = "<p>Tidak ada data wisata yang tersedia.</p>";
       return;
@@ -116,10 +107,32 @@ function render_all(data = []) {
     });
 }
   
-// Gunakan satu window.onload untuk memanggil fetch_all dan event listener hamburger menu
-window.onload = () => {
+// Fungsi inisialisasi search
+function initSearch() {
+    // Tangani pencarian melalui form
+    const form = document.querySelector('.search-container form');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Mencegah submit default form
+            const searchQuery = document.querySelector('.search-box').value.trim();
+            if (searchQuery) {
+                await fetch_search(searchQuery);
+            }
+        });
+    }
+    // Panggil fetch_all() saat inisialisasi agar data awal langsung tampil
     fetch_all();
-    document.querySelector(".hamburger").addEventListener("click", function() {
-        document.querySelector(".navbar").classList.toggle("active");
-    });
-};
+  
+    // Jika terdapat hamburger menu, pasang event listener (jika elemen tersebut ada di halaman search)
+    const hamburger = document.querySelector(".hamburger");
+    if (hamburger) {
+        hamburger.addEventListener("click", function() {
+            const navbar = document.querySelector(".navbar");
+            if (navbar) {
+                navbar.classList.toggle("active");
+            }
+        });
+    }
+}
+
+export default initSearch;
