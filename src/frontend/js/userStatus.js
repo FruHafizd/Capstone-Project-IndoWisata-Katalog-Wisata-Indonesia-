@@ -1,57 +1,31 @@
-// frontend/js/userStatus.js
-
-// Fungsi untuk mengambil data profile dari API
-async function fetchUserProfile(token) {
-  try {
-    const response = await fetch("http://localhost:3000/api/profile", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (response.ok) {
-      return await response.json();
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-    return null;
-  }
-}
-
-// Fungsi untuk mengupdate tampilan user status
-async function updateUserStatus() {
+function updateUserStatus() {
   const userStatus = document.getElementById("userStatus");
   const token = localStorage.getItem("token");
+  const userName = localStorage.getItem("userName"); // Ambil dari localStorage
 
-  if (token) {
-    // Jika token ada, ambil data profile
-    const userData = await fetchUserProfile(token);
-    if (userData && userData.name) {
-      userStatus.innerHTML = `
-          <a href="/profile.html">${userData.name}</a> | 
-          <a href="#" id="logoutLink">Logout</a>
-        `;
+  if (token && userName) {
+    userStatus.innerHTML = `
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          ${userName} <!-- Tampilkan nama dari localStorage -->
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/profile.html">Profile</a></li>
+          <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
+        </ul>
+      </div>
+    `;
 
-      document.getElementById("logoutLink").addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("token");
-        window.location.reload();
-      });
-    } else {
-      // Jika token tidak valid atau terjadi error, tampilkan link login
-      userStatus.innerHTML = `<a href="src/login.html">Login</a>`;
-    }
+    // Logout handler
+    document.getElementById("logoutLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      window.location.href = "/src/index.html";
+    });
   } else {
-    // Jika token tidak ada, tampilkan link login
     userStatus.innerHTML = `<a href="/src/login.html">Login</a>`;
   }
 }
 
-// Panggil fungsi ketika DOM sudah siap
 document.addEventListener("DOMContentLoaded", updateUserStatus);
-
-// Jika menggunakan modul, ekspor fungsi (opsional)
-export { updateUserStatus };

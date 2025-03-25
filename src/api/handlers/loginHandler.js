@@ -12,26 +12,30 @@ class LoginHandler {
     try {
       const { email, password } = request.payload;
       const user = await this._service.getUserByEmail(email);
-
+  
       if (!user) {
         throw new ClientError('Email atau password salah', 401);
       }
-
+  
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         throw new ClientError('Email atau password salah', 401);
       }
-
+  
       const token = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
-
+  
+      // Tambahkan data pengguna yang diperlukan di response
       return h.response({
         status: 'success',
         message: 'Login berhasil',
-        data: { token },
+        data: { 
+          token,
+          name: user.name // Kirim nama pengguna dari database
+        },
       }).code(200);
     } catch (error) {
       if (error instanceof ClientError) {
@@ -40,7 +44,7 @@ class LoginHandler {
           message: error.message,
         }).code(error.statusCode);
       }
-      console.error(error);
+      console.error('Error di loginHandler:', error);
       return h.response({
         status: 'error',
         message: 'Gagal melakukan login, silakan coba lagi',
