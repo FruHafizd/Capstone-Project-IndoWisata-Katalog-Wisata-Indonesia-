@@ -3,6 +3,7 @@ import initCategory from './frontend/views/category.js';
 import initHome from './frontend/views/home.js';
 import initSearch from './frontend/views/search.js';
 import initDetail from './frontend/views/detail.js';
+import './frontend/js/userStatus.js';
 import './frontend/js/login.js';
 import './frontend/js/register.js';
 
