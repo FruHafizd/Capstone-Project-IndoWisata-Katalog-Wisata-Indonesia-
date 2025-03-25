@@ -3,6 +3,14 @@ const category = urlParams.get('id'); // Ambil ID kategori dari URL
 const api_category = "http://localhost:3000/api/categories";
 const wisata = "http://localhost:3000/api/wisata/category";
 
+const categoryImages = {
+    "alam": "frontend/image/lava.webp",
+    "keluarga": "frontend/image/tmii.jpg",
+    "kuliner": "frontend/image/resto.jpg",
+    "lainnya": "frontend/image/tourist.jpg",
+    "sejarah": "frontend/image/candi.jpg"
+};
+
 async function fetch_all_category() {
     try {
         const response = await fetch(api_category);
@@ -77,14 +85,18 @@ function render_detail(data) {
 
 function render_all(data) {
     const grid = document.getElementById("grid-container");
-    grid.innerHTML = data.map(item => `
-        <div class="grid-item" data-id="${item.name.toLowerCase()}">
-            <img src="${item.image || 'frontend/image/lava.webp'}" alt="${item.name || 'Wisata'}">
-            <h3>${item.name || 'N/A'}</h3>
-        </div>
-    `).join('');
+    grid.innerHTML = data.map(item => {
+        const categoryName = item.name.toLowerCase(); 
+        const categoryImage = categoryImages[categoryName] || "frontend/image/default.jpg"; 
+        
+        return `
+            <div class="grid-item" data-id="${categoryName}">
+                <img src="${categoryImage}" alt="${item.name || 'Wisata'}">
+                <h3>${item.name || 'N/A'}</h3>
+            </div>
+        `;
+    }).join('');
 
-    // Event listener untuk setiap kategori
     document.querySelectorAll('.grid-item').forEach(item => {
         item.addEventListener('click', () => {
             const wisataId = item.getAttribute('data-id');
@@ -92,6 +104,7 @@ function render_all(data) {
         });
     });
 }
+
 
 window.onload = () => {
     if (category) {
