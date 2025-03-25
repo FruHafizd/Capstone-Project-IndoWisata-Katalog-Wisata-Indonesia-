@@ -60,7 +60,7 @@ const wisataRoutes = [
   },
   {
     method: 'GET',
-    path: '/api/wisata/category/{category}',
+    path: '/api/wisata/categories/{category}',
     handler: placesHandler.getWisataByCategory,
   },
 
