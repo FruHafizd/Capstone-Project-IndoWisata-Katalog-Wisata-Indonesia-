@@ -83,6 +83,13 @@ body {
     color: rgba(255, 255, 255, 0.937);
     font-weight: 700;
 }
+.dropdown-menu a {
+    color:rgb(0, 0, 0);
+}
+.dropdown-menu a:hover {
+    color:rgb(0, 0, 0);
+    font-weight: 700;
+}
 
 .opening {
     padding: 100px 7.6%;
