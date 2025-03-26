@@ -64,6 +64,7 @@ async function fetch_one_category(id) {
             document.getElementById("grid-container-category").innerHTML = "<p style='text-align: center;'>Wisata dalam kategori ini tidak ditemukan.</p>";
         } else {
             render_detail(result.data.places);
+            console.log(result.data.places);
         }
     } catch (error) {
         console.error("Error:", error);
@@ -108,9 +109,9 @@ function render_all(data) {
         const categoryName = item.name.toLowerCase(); 
         const categoryImage = categoryImages[categoryName] || "frontend/image/default.jpg"; 
         return `
-            <div class="grid-item" data-id="${item.id}">
-                <img src="${categoryImage}" alt="${item.name || 'Kategori'}">
-                <h3>${item.name || 'N/A'}</h3>
+            <div class="grid-item" data-id="${item.id}" style="padding-bottom: 10px">
+                <img src="${categoryImage}" alt="${item.name || 'Kategori'}"  >
+                <h3 style="display: flex; justify-content: center; align-item: center;">${item.name || 'N/A'}</h3>
             </div>
         `;
     }).join('');
