@@ -1,6 +1,12 @@
 const API_LOGIN_URL = 'http://localhost:3000/api/login';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem("token");
+
+  if (token && window.location.pathname.includes("login.html")) {
+    window.location.replace("index.html");
+    return;
+  }
   const loginForm = document.getElementById('loginForm');
   if (!loginForm) {
     console.error('Form login tidak ditemukan.');
@@ -32,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('token', data.data.token);
         localStorage.setItem('userName', data.data.name); // Ambil langsung dari response login
         window.location.href = 'index.html'; // Ubah URL redirect jika diperlukan
+        document.addEventListener("DOMContentLoaded", () => {
+        });
       } else {
         alert(data.message || 'Login gagal, periksa kembali email dan password Anda.');
       }      
