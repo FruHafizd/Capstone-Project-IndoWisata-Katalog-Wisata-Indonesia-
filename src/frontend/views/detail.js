@@ -1,5 +1,3 @@
-// frontend/views/detail.js
-
 const urlParams = new URLSearchParams(window.location.search);
 const wisata = urlParams.get('id');
 
@@ -17,7 +15,7 @@ async function fetch_wisata_detail(id) {
             throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
         }
         const result = await response.json();
-        console.log("Respons API:", result); // Debugging
+        // console.log("Respons API:", result); // Debugging
         render_detail(result);
         // Pastikan data.detail (result.data.place) ada untuk peta dan street view
         if (result.data && result.data.place) {
@@ -126,8 +124,6 @@ function initialize(data) {
 function initDetail() {
     if (wisata) {
         fetch_wisata_detail(wisata);
-    } else {
-        console.error("ID wisata tidak tersedia pada URL");
     }
 }
 
