@@ -64,7 +64,7 @@ async function fetch_one_category(id) {
             document.getElementById("grid-container-category").innerHTML = "<p style='text-align: center;'>Wisata dalam kategori ini tidak ditemukan.</p>";
         } else {
             render_detail(result.data.places);
-            console.log(result.data.places);
+            // console.log(result.data.places);
         }
     } catch (error) {
         console.error("Error:", error);
