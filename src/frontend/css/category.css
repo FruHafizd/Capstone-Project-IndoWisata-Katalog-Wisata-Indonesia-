@@ -153,6 +153,21 @@ body {
     object-fit: cover;
     padding-bottom: 10px;
 }
+.rating b {
+    color: black;
+    font-size: 15px;
+    font-weight: 10;
+}
+.checked {
+    color: orange;
+}
+.rating {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: rgb(0, 0, 0);
+    padding-bottom: 20px;
+    padding-left: 10px;
+}
 .footer {
     color: rgb(0, 0, 0);
     padding-left: 110px;

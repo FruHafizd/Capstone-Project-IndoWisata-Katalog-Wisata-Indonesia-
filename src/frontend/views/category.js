@@ -3,6 +3,22 @@ const category = urlParams.get('id'); // Ambil ID kategori dari URL
 const api_category = "http://localhost:3000/api/categories";
 const wisata = "http://localhost:3000/api/wisata/category";
 
+
+
+function convertRatingToStars(rating) {
+    const numericRating = parseFloat(rating) || 0;
+    const fullStars = Math.floor(numericRating);
+    const halfStar = numericRating % 1 >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+  
+    const fullStarIcon = '<span class="fa fa-star checked"></span>';
+    const halfStarIcon = '<span class="fa fa-star-half-alt checked"></span>';
+    const emptyStarIcon = '<span class="fa fa-star"></span>';
+  
+    return fullStarIcon.repeat(fullStars) +
+           (halfStar ? halfStarIcon : '') +
+           emptyStarIcon.repeat(emptyStars);
+}
 const categoryImages = {
     "alam": "frontend/image/lava.webp",
     "keluarga": "frontend/image/tmii.jpg",
@@ -90,7 +106,7 @@ function render_all(data) {
         const categoryImage = categoryImages[categoryName] || "frontend/image/default.jpg"; 
         
         return `
-            <div class="grid-item" data-id="${categoryName}">
+            <div class="grid-item" data-id="${item.id}">
                 <img src="${categoryImage}" alt="${item.name || 'Wisata'}">
                 <h3>${item.name || 'N/A'}</h3>
             </div>
