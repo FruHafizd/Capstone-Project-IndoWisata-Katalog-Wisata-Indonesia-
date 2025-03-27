@@ -127,6 +127,41 @@ class UsersService {
     return result.rows[0].id;
   }
 
+  async updatePassword(id, currentPassword, newPassword) {
+    // Ambil data user berdasarkan id
+    const queryUser = {
+      text: 'SELECT password FROM users WHERE id = $1',
+      values: [id],
+    };
+    const result = await this._pool.query(queryUser);
+    if (!result.rowCount) {
+      throw new Error("User tidak ditemukan");
+    }
+    const user = result.rows[0];
+    
+    // Verifikasi password lama
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      // Lempar error dengan pesan yang sesuai
+      throw new Error("Password lama tidak valid");
+    }
+    
+    // Hash password baru
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    
+    // Update password di database
+    const queryUpdate = {
+      text: 'UPDATE users SET password = $1 WHERE id = $2 RETURNING id',
+      values: [hashedPassword, id],
+    };
+    const updateResult = await this._pool.query(queryUpdate);
+    if (!updateResult.rowCount) {
+      throw new Error("Gagal memperbarui password");
+    }
+    return updateResult.rows[0].id;
+  }
+  
+
 }
 
 module.exports = UsersService;

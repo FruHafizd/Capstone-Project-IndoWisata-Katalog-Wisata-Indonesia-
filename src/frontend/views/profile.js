@@ -20,46 +20,48 @@ async function fetch_profile() {
 
 function render_profile(data) {
     const container = document.getElementById('container');
-    container.innerHTML = 
-    `
-    <div class="profile-card">
-                <div class="title">
-                    <h1>My Profile</h1>
-                </div>
-                <div class="profile-container">
-                    <img src="/src/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
-                    <form>
-                        <div class="form-group">
-                            <label>Name</label>
-                            <div class="form-control">${data.name}</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <div class="form-control">${data.email}</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Age</label>
-                            <div class="form-control">${data.age}</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Pekerjaan</label>
-                            <div class="form-control">${data.occupation}</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Hobby</label>
-                            <div class="form-control">${data.hobby}</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Status Nikah</label>
-                            <div class="form-control">${data.marital_status}</div>
-                        </div>
-                        <button class="button" id="edit-profile">Edit Profile</button>
-                    </form>
-                </div>
+    container.innerHTML = `
+      <div class="profile-card">
+        <div class="title">
+            <h1>My Profile</h1>
         </div>
+        <div class="profile-container">
+            <img src="/src/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
+            <form>
+                <div class="form-group">
+                    <label>Name</label>
+                    <div class="form-control">${data.name}</div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="form-control">${data.email}</div>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <div class="form-control">${data.age}</div>
+                </div>
+                <div class="form-group">
+                    <label>Pekerjaan</label>
+                    <div class="form-control">${data.occupation}</div>
+                </div>
+                <div class="form-group">
+                    <label>Hobby</label>
+                    <div class="form-control">${data.hobby}</div>
+                </div>
+                <div class="form-group">
+                    <label>Status Nikah</label>
+                    <div class="form-control">${data.marital_status}</div>
+                </div>
+                <button class="button" id="edit-profile">Edit Profile</button>
+                <button class="button" id="edit-password">Ganti Password</button>
+            </form>
+        </div>
+      </div>
     `;
     document.getElementById("edit-profile").addEventListener("click", () => render_edit_profile(data));
+    document.getElementById("edit-password").addEventListener("click", () => render_edit_password());
 }
+  
 
 function render_edit_profile(data) {
     const container = document.getElementById('container');
@@ -146,7 +148,84 @@ async function save_profile(userId) {
     }
 }
 
+function render_edit_password() {
+    const container = document.getElementById('container');
+    container.innerHTML = `
+      <div class="profile-card">
+        <div class="profile-container" style="display: flex; gap: 20px;">
+          <!-- Kolom Form -->
+          <div class="form-column" style="flex: 1;">
+            <h2>Ganti Password</h2>
+            <form id="edit-password-form">
+              <div class="form-group">
+                <label>Password Lama</label>
+                <input type="password" class="form-control" id="currentPassword" placeholder="Masukkan password lama">
+              </div>
+              <div class="form-group">
+                <label>Password Baru</label>
+                <input type="password" class="form-control" id="newPassword" placeholder="Masukkan password baru">
+              </div>
+              <button type="button" class="button" id="save-password">Simpan Password</button>
+            </form>
+          </div>
+          <!-- Kolom Pesan Error -->
+          <div class="message-column" style="flex: 0.5; display: flex; align-items: center; justify-content: center;">
+            <div id="error-message" class="error-message" style="color: red; font-weight: bold;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById("save-password").addEventListener("click", () => save_password());
+}
 
+async function save_password() {
+    const id = localStorage.getItem("id");
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    
+    const payload = {
+      currentPassword,
+      newPassword,
+    };
+  
+    // Ambil elemen error-message (sudah ada di layout render_edit_password)
+    const errorContainer = document.getElementById("error-message");
+    errorContainer.innerText = ""; // Reset pesan error sebelumnya
+  
+    try {
+      const response = await fetch(`${api_profile}/${id}/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        // Tampilkan pesan error ke dalam errorContainer
+        errorContainer.innerText = result.message || "Terjadi kesalahan saat mengubah password.";
+        return;
+      }
+      
+      // Jika berhasil, tampilkan pesan sukses dengan gaya yang berbeda (misalnya, hijau)
+      errorContainer.style.color = "green";
+      errorContainer.innerText = result.message || "Password berhasil diperbarui!";
+      
+      // Opsional: refresh profile atau kembali ke tampilan profile setelah beberapa detik
+      setTimeout(() => {
+        errorContainer.innerText = "";
+        errorContainer.style.color = "red"; // Reset ke warna error untuk penggunaan selanjutnya
+        fetch_profile();
+      }, 2000);
+    } catch (error) {
+      console.error("Error:", error);
+      errorContainer.innerText = "Gagal menyimpan perubahan password. Silakan coba lagi.";
+    }
+  }
+  
 
 
 function initprofile (){

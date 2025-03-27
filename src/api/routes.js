@@ -144,6 +144,11 @@ const wisataRoutes = [
     path: "/api/userVisits",
     handler: userVisitsHandler.getAggregatedUserVisitsHandler,
   },
+  {
+    method: 'PUT',
+    path: '/api/users/{id}/password',
+    handler: usersHandler.updatePasswordHandler,
+  },
 ];
 
 module.exports = wisataRoutes;
