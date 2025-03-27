@@ -10,7 +10,7 @@ function updateUserStatus() {
           ${userName} <!-- Tampilkan nama dari localStorage -->
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="/profile.html">Profile</a></li>
+          <li><a class="dropdown-item" href="/src/profile.html">Profile</a></li>
           <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
         </ul>
       </div>

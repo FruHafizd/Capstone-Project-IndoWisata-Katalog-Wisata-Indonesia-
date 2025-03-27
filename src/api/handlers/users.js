@@ -150,10 +150,10 @@ class UsersHandler {
       const { id } = request.params;
       const updatedFields = {
         ...value,
-        age: value.age || null,
-        occupation: value.occupation || null,
-        marital_status: value.marital_status || null,
-        hobby: value.hobby || null,
+        age: value.age ,
+        occupation: value.occupation ,
+        marital_status: value.marital_status ,
+        hobby: value.hobby ,
       };
 
       const updatedId = await this._service.updateUser(id, updatedFields);
