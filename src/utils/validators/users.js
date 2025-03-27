@@ -36,4 +36,9 @@ const UserUpdateSchema = Joi.object({
   role: Joi.string().valid('user', 'admin')
 });
 
-module.exports = { UserPayloadSchema, UserUpdateSchema };
+const UserPasswordUpdateSchema = Joi.object({
+  oldPassword: Joi.string().min(8).required(),
+  newPassword: Joi.string().min(8).required(),
+});
+
+module.exports = { UserPayloadSchema, UserUpdateSchema, UserPasswordUpdateSchema };

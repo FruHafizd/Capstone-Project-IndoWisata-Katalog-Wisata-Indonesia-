@@ -51,6 +51,11 @@ function validateForm() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem("token");
+  if (token && window.location.pathname.includes("register.html")) {
+    window.location.replace("index.html");
+    return;
+  }
   const registerForm = document.getElementById('registerForm');
   
   registerForm.addEventListener('submit', function(e) {
