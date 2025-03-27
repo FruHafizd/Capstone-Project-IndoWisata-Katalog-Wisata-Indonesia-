@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const bcrypt = require("bcrypt");
 const { UserPayloadSchema } = require('../utils/validators/users');
 const PlacesHandler = require('./handlers/places');
 const PlacesService = require('./services/places');
@@ -126,7 +127,7 @@ const wisataRoutes = [
     method: 'POST',
     path: '/api/login',
     handler: loginHandler.loginHandler,
-  }
+  },
   
 ];
 

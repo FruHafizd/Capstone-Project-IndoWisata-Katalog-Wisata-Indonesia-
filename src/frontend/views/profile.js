@@ -23,6 +23,9 @@ function render_profile(data) {
     container.innerHTML = 
     `
     <div class="profile-card">
+                <div class="title">
+                    <h1>My Profile</h1>
+                </div>
                 <div class="profile-container">
                     <img src="/src/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
                     <form>

@@ -56,16 +56,24 @@ body {
     align-items: center;
 }
 .profile-card {
-    background-image: url(../image/1.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/1.jpg);
     width: 50%;
     background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-size: cover 700px;
+    background-position: center center;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding-top: 120px;
     margin-top: 5px;
+}
+.title {
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+    padding: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .profile-container {
     width: 100%;

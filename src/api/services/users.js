@@ -1,6 +1,8 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
+const ClientError = require("../../errors/client-error");
+
 
 class UsersService {
   constructor() {
@@ -124,6 +126,7 @@ class UsersService {
     }
     return result.rows[0].id;
   }
+
 }
 
 module.exports = UsersService;
