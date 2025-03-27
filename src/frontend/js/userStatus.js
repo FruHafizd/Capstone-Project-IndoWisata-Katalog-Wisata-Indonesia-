@@ -21,6 +21,7 @@ function updateUserStatus() {
       e.preventDefault();
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
+      localStorage.removeItem("id");
       window.location.href = "/src/index.html";
     });
   } else {

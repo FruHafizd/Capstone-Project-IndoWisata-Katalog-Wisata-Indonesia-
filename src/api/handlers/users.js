@@ -15,6 +15,7 @@ class UsersHandler {
       "getUserByIdHandler",
       "updateUserHandler",
       "deleteUserHandler",
+      "updatePasswordHandler"
     ];
     methods.forEach((method) => {
       this[method] = this[method].bind(this);
@@ -150,10 +151,10 @@ class UsersHandler {
       const { id } = request.params;
       const updatedFields = {
         ...value,
-        age: value.age || null,
-        occupation: value.occupation || null,
-        marital_status: value.marital_status || null,
-        hobby: value.hobby || null,
+        age: value.age ,
+        occupation: value.occupation ,
+        marital_status: value.marital_status ,
+        hobby: value.hobby ,
       };
 
       const updatedId = await this._service.updateUser(id, updatedFields);
@@ -223,6 +224,33 @@ class UsersHandler {
         .code(500);
     }
   }
+
+  async updatePasswordHandler(request, h) {
+    try {
+      const { currentPassword, newPassword } = request.payload;
+      const { id } = request.params;
+      
+      // Panggil service updatePassword
+      const updatedId = await this._service.updatePassword(id, currentPassword, newPassword);
+      
+      return h.response({
+        status: "success",
+        message: "Password berhasil diperbarui",
+        data: { id: updatedId },
+      }).code(200);
+    } catch (error) {
+      // Jangan tampilkan error stack ke client
+      // Jika perlu, simpan error ke log file internal untuk keperluan debugging
+      // console.error(error); // Opsional, bisa dihilangkan atau diarahkan ke log internal
+      
+      return h.response({
+        status: "fail",
+        message: error.message, // misal: "Password lama tidak valid"
+      }).code(400);
+    }
+  }
+  
+  
 }
 
 module.exports = UsersHandler;
