@@ -34,7 +34,8 @@ class LoginHandler {
         message: 'Login berhasil',
         data: { 
           token,
-          name: user.name // Kirim nama pengguna dari database
+          name: user.name, // Kirim nama pengguna dari database
+          id: user.id
         },
       }).code(200);
     } catch (error) {

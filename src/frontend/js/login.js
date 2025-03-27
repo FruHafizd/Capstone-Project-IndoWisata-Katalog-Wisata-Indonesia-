@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Login berhasil!');
         // Simpan token dan nama user ke localStorage
         localStorage.setItem('token', data.data.token);
-        localStorage.setItem('userName', data.data.name); // Ambil langsung dari response login
+        localStorage.setItem('userName', data.data.name);
+        localStorage.setItem('id', data.data.id); // Ambil langsung dari response login
         window.location.href = 'index.html'; // Ubah URL redirect jika diperlukan
         document.addEventListener("DOMContentLoaded", () => {
         });
