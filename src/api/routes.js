@@ -8,6 +8,8 @@ const CategoriesService = require('./services/categories');
 const UsersHandler = require('./handlers/users');
 const UsersService = require('./services/users');
 const LoginHandler = require('./handlers/loginHandler');
+const UserVisitsHandler = require("./handlers/user-visits");
+const UserVisitsService = require("./services/user-visits");
 
 // Inisialisasi service dan handler
 const placesService = new PlacesService();
@@ -17,7 +19,8 @@ const categoriesHandler = new CategoriesHandler(categoriesService);
 const usersService = new UsersService();
 const usersHandler = new UsersHandler(usersService);
 const loginHandler = new LoginHandler(usersService);
-
+const userVisitsService = new UserVisitsService();
+const userVisitsHandler = new UserVisitsHandler(userVisitsService);
 
 const wisataRoutes = [
   // Routes for Wisata
@@ -129,6 +132,18 @@ const wisataRoutes = [
     handler: loginHandler.loginHandler,
   },
   
+
+  // Route for User Visits
+  {
+    method: "POST",
+    path: "/api/updateUserVisit",
+    handler: userVisitsHandler.updateUserVisitHandler,
+  },
+  {
+    method: "GET",
+    path: "/api/userVisits",
+    handler: userVisitsHandler.getAggregatedUserVisitsHandler,
+  },
 ];
 
 module.exports = wisataRoutes;
