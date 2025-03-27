@@ -223,7 +223,6 @@ class UsersHandler {
         .code(500);
     }
   }
-  
 }
 
 module.exports = UsersHandler;

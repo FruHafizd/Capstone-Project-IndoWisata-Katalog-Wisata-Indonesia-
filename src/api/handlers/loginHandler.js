@@ -35,7 +35,7 @@ class LoginHandler {
         data: { 
           token,
           name: user.name, // Kirim nama pengguna dari database
-          id: user.id
+          id: user.id // Kirim id pengguna dari database
         },
       }).code(200);
     } catch (error) {
