@@ -147,7 +147,13 @@ async function save_profile(userId) {
 
 
 function initprofile (){
-    fetch_profile();
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.replace("login.html");
+        return;
+    } else {
+        fetch_profile();
+    }
 }
 
 export default initprofile;
