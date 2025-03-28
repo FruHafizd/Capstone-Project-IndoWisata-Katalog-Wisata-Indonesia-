@@ -33,3 +33,9 @@
 .form-check-label {
     font-size: 0.9rem;
 }
+
+.bootstrap-select .dropdown-menu.inner {
+    max-height: 300px !important;
+    overflow-y: auto;
+  }
+  

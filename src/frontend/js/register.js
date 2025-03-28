@@ -35,13 +35,13 @@ function validateForm() {
     errors.push("Password harus diisi minimal 8 karakter.");
   }
   if (!hobby) {
-    errors.push("Pilih salah satu hobi: hiking, kuliner, fotografi, sejarah, belanja, atau bahari.");
+    errors.push("Pilih salah satu hobi yang tersedia.");
   }
-  if (!age || age < 12 || age > 100) {
+  if (!age || age < 13 || age > 70) {
     errors.push("Usia harus diisi dengan angka antara 12 hingga 100.");
   }
   if (!occupation) {
-    errors.push("Pekerjaan harus diisi.");
+    errors.push("Pilih salah satu pekerjaan yang tersedia.");
   }
   if (!maritalStatus) {
     errors.push("Status pernikahan harus diisi, pilih antara Menikah atau Belum Menikah.");
@@ -51,6 +51,12 @@ function validateForm() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  $(document).ready(function(){
+    $('#hobby').selectpicker();
+  });
+  $(document).ready(function(){
+    $('#pekerjaan').selectpicker();
+  });
   const token = localStorage.getItem("token");
   if (token && window.location.pathname.includes("register.html")) {
     window.location.replace("index.html");
@@ -90,6 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
       occupation: document.getElementById('pekerjaan').value,
       marital_status: document.querySelector('input[name="status_nikah"]:checked')?.value || ''
     };
+
+    
 
     fetch(API_USERS_URL, {
       method: 'POST',

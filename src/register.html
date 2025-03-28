@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="frontend/css/register.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Indowisata - Register</title>
 </head>
@@ -88,39 +89,236 @@
                             <div class="row mb-4">
                                 <!-- Hobby Dropdown -->
                                 <div class="col-md-6 mb-3">
-                                  <label for="hobby" class="form-label">Hobi</label>
-                                  <select class="form-select" id="hobby" name="hobby">
-                                    <option value="">Pilih Hobi</option>
-                                    <option value="hiking">Hiking & Alam Terbuka</option>
-                                    <option value="kuliner">Kuliner</option>
-                                    <option value="fotografi">Fotografi</option>
-                                    <option value="sejarah">Sejarah & Budaya</option>
-                                    <option value="belanja">Belanja</option>
-                                    <option value="bahari">Aktivitas Bahari</option>
+                                  <label for="hobby" class="form-label selectpicker">Hobi</label>
+                                  <select class="form-control" id="hobby" name="hobby" data-live-search="true">
+                                    <option value="">Pilih Hobby</option>
+                                    <option value="berselancar">berselancar</option>
+                                    <option value="paralayang">paralayang</option>
+                                    <option value="bermain catur">bermain catur</option>
+                                    <option value="mencoba kuliner baru">mencoba kuliner baru</option>
+                                    <option value="bermain skateboard">bermain skateboard</option>
+                                    <option value="menyelam">menyelam</option>
+                                    <option value="mengikuti cosplay">mengikuti cosplay</option>
+                                    <option value="merakit model kit">merakit model kit</option>
+                                    <option value="mengajar online">mengajar online</option>
+                                    <option value="menulis skenario">menulis skenario</option>
+                                    <option value="merakit robot">merakit robot</option>
+                                    <option value="bermain catur kilat">bermain catur kilat</option>
+                                    <option value="mengoleksi figur action">mengoleksi figur action</option>
+                                    <option value="merakit drone">merakit drone</option>
+                                    <option value="bermain musik">bermain musik</option>
+                                    <option value="menonton teater">menonton teater</option>
+                                    <option value="membuat komik">membuat komik</option>
+                                    <option value="menjadi relawan sosial">menjadi relawan sosial</option>
+                                    <option value="membaca buku">membaca buku</option>
+                                    <option value="bermain bulu tangkis">bermain bulu tangkis</option>
+                                    <option value="menulis puisi">menulis puisi</option>
+                                    <option value="bermain biola">bermain biola</option>
+                                    <option value="fotografi">fotografi</option>
+                                    <option value="mempelajari astronomi">mempelajari astronomi</option>
+                                    <option value="bermain puzzle">bermain puzzle</option>
+                                    <option value="coding">coding</option>
+                                    <option value="bermain peran di drama">bermain peran di drama</option>
+                                    <option value="menjelajahi gua">menjelajahi gua</option>
+                                    <option value="menanam tanaman">menanam tanaman</option>
+                                    <option value="panjat tebing">panjat tebing</option>
+                                    <option value="menyanyi">menyanyi</option>
+                                    <option value="belajar bahasa asing">belajar bahasa asing</option>
+                                    <option value="menulis cerita">menulis cerita</option>
+                                    <option value="bermain origami">bermain origami</option>
+                                    <option value="menjahit">menjahit</option>
+                                    <option value="berburu">berburu</option>
+                                    <option value="berenang">berenang</option>
+                                    <option value="membuat podcast">membuat podcast</option>
+                                    <option value="membuat lagu">membuat lagu</option>
+                                    <option value="menari">menari</option>
+                                    <option value="mengikuti perlombaan menulis">mengikuti perlombaan menulis</option>
+                                    <option value="bermain trampolin">bermain trampolin</option>
+                                    <option value="berlatih yoga">berlatih yoga</option>
+                                    <option value="melukis">melukis</option>
+                                    <option value="mendaki gunung">mendaki gunung</option>
+                                    <option value="menggambar digital">menggambar digital</option>
+                                    <option value="bermain biliar">bermain biliar</option>
+                                    <option value="bermain drum">bermain drum</option>
+                                    <option value="bermain sepak bola">bermain sepak bola</option>
+                                    <option value="mengembangkan aplikasi">mengembangkan aplikasi</option>
+                                    <option value="berlatih bela diri tradisional">berlatih bela diri tradisional</option>
+                                    <option value="mendengarkan podcast">mendengarkan podcast</option>
+                                    <option value="berlatih beatbox">berlatih beatbox</option>
+                                    <option value="mengikuti maraton">mengikuti maraton</option>
+                                    <option value="bermain voli">bermain voli</option>
+                                    <option value="bermain role-playing game">bermain role-playing game</option>
+                                    <option value="bermain kendama">bermain kendama</option>
+                                    <option value="mengoleksi koin">mengoleksi koin</option>
+                                    <option value="menonton anime">menonton anime</option>
+                                    <option value="menjadi kolektor barang antik">menjadi kolektor barang antik</option>
+                                    <option value="merancang pakaian">merancang pakaian</option>
+                                    <option value="mengedit video">mengedit video</option>
+                                    <option value="bermain basket">bermain basket</option>
+                                    <option value="bermain piano">bermain piano</option>
+                                    <option value="berlatih bela diri">berlatih bela diri</option>
+                                    <option value="bermain game">bermain game</option>
+                                    <option value="menonton film">menonton film</option>
+                                    <option value="bermain kartu">bermain kartu</option>
+                                    <option value="bermain boomerang">bermain boomerang</option>
+                                    <option value="menulis jurnal harian">menulis jurnal harian</option>
+                                    <option value="berlatih sulap kartu">berlatih sulap kartu</option>
+                                    <option value="menjadi reviewer teknologi">menjadi reviewer teknologi</option>
+                                    <option value="mencoba seni kaligrafi">mencoba seni kaligrafi</option>
+                                    <option value="bermain sulap">bermain sulap</option>
+                                    <option value="bermain tenis">bermain tenis</option>
+                                    <option value="merajut">merajut</option>
+                                    <option value="bermain paintball">bermain paintball</option>
+                                    <option value="bermain e-sports">bermain e-sports</option>
+                                    <option value="bersepeda">bersepeda</option>
+                                    <option value="bermain airsoft gun">bermain airsoft gun</option>
+                                    <option value="mengedit foto">mengedit foto</option>
+                                    <option value="menulis blog">menulis blog</option>
+                                    <option value="membuat film pendek">membuat film pendek</option>
+                                    <option value="menulis lirik lagu">menulis lirik lagu</option>
+                                    <option value="memancing">memancing</option>
+                                    <option value="menggambar">menggambar</option>
+                                    <option value="merajut tas">merajut tas</option>
+                                    <option value="merakit elektronik">merakit elektronik</option>
+                                    <option value="memasak">memasak</option>
+                                    <option value="bermain roller skating">bermain roller skating</option>
+                                    <option value="merakit komputer">merakit komputer</option>
+                                    <option value="bermain gitar">bermain gitar</option>
+                                    <option value="bermain harmonika">bermain harmonika</option>
+                                    <option value="membaca novel misteri">membaca novel misteri</option>
+                                    <option value="berkemah">berkemah</option>
+                                    <option value="mengoleksi perangko">mengoleksi perangko</option>
+                                    <option value="bermain golf">bermain golf</option>
+                                    <option value="mengikuti lomba lari">mengikuti lomba lari</option>
+                                    <option value="berlatih parkour">berlatih parkour</option>
+                                    <option value="bermain frisbee">bermain frisbee</option>
                                   </select>
                             </div>
                 
                                 <!-- Usia -->
                             <div class="col-md-6 mb-3">
-                                  <label for="usia" class="form-label">Usia</label>
-                                  <input type="number" 
-                                         class="form-control" 
-                                         id="usia"
-                                         name="usia"
-                                         min="12"
-                                         max="100">
+                                  <label for="pekerjaan" class="form-label">Pekerjaan</label>
+                                  <select class="form-control selectpicker" id="pekerjaan" name="pekerjaan" data-live-search="true">
+                                    <option value="">Pilih Pekerjaan</option>
+                                    <option value="Fisioterapis">Fisioterapis</option>
+                                    <option value="Ahli Lingkungan">Ahli Lingkungan</option>
+                                    <option value="Penyiar Radio">Penyiar Radio</option>
+                                    <option value="Jaksa">Jaksa</option>
+                                    <option value="IT Support">IT Support</option>
+                                    <option value="Arsitek Lanskap">Arsitek Lanskap</option>
+                                    <option value="Blogger">Blogger</option>
+                                    <option value="Hakim">Hakim</option>
+                                    <option value="Pramugari">Pramugari</option>
+                                    <option value="Reporter">Reporter</option>
+                                    <option value="Peneliti">Peneliti</option>
+                                    <option value="Desainer">Desainer</option>
+                                    <option value="Pelatih Olahraga">Pelatih Olahraga</option>
+                                    <option value="Dokter">Dokter</option>
+                                    <option value="Jurnalis">Jurnalis</option>
+                                    <option value="Ilmuwan">Ilmuwan</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Polisi">Polisi</option>
+                                    <option value="Makeup Artist">Makeup Artist</option>
+                                    <option value="Ahli Gizi">Ahli Gizi</option>
+                                    <option value="Penata Rambut">Penata Rambut</option>
+                                    <option value="Masinis">Masinis</option>
+                                    <option value="Pelaut">Pelaut</option>
+                                    <option value="Mahasiswa">Mahasiswa</option>
+                                    <option value="HRD">HRD</option>
+                                    <option value="Fotografer">Fotografer</option>
+                                    <option value="Apoteker">Apoteker</option>
+                                    <option value="Ekonom">Ekonom</option>
+                                    <option value="Teknisi Mesin">Teknisi Mesin</option>
+                                    <option value="Penasihat Pajak">Penasihat Pajak</option>
+                                    <option value="Penyanyi">Penyanyi</option>
+                                    <option value="Arkeolog">Arkeolog</option>
+                                    <option value="Model">Model</option>
+                                    <option value="Sejarawan">Sejarawan</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Penasihat Hukum">Penasihat Hukum</option>
+                                    <option value="Voice Over">Voice Over</option>
+                                    <option value="Mekanik">Mekanik</option>
+                                    <option value="Game Developer">Game Developer</option>
+                                    <option value="Ahli Kimia">Ahli Kimia</option>
+                                    <option value="Koki">Koki</option>
+                                    <option value="Tukang Kayu">Tukang Kayu</option>
+                                    <option value="Teknisi Elektronik">Teknisi Elektronik</option>
+                                    <option value="Rekruter">Rekruter</option>
+                                    <option value="Montir">Montir</option>
+                                    <option value="Videografer">Videografer</option>
+                                    <option value="Akuntan">Akuntan</option>
+                                    <option value="Arsitek">Arsitek</option>
+                                    <option value="Pakar Keuangan">Pakar Keuangan</option>
+                                    <option value="Pilot">Pilot</option>
+                                    <option value="Aktor">Aktor</option>
+                                    <option value="Ahli Kecerdasan Buatan">Ahli Kecerdasan Buatan</option>
+                                    <option value="Operator Produksi">Operator Produksi</option>
+                                    <option value="Pengacara">Pengacara</option>
+                                    <option value="Animator">Animator</option>
+                                    <option value="Surveyor">Surveyor</option>
+                                    <option value="Ahli Robotika">Ahli Robotika</option>
+                                    <option value="Petani">Petani</option>
+                                    <option value="Cyber Security">Cyber Security</option>
+                                    <option value="Meteorolog">Meteorolog</option>
+                                    <option value="Pustakawan">Pustakawan</option>
+                                    <option value="Penjaga Hutan">Penjaga Hutan</option>
+                                    <option value="MC">MC</option>
+                                    <option value="Perawat">Perawat</option>
+                                    <option value="Pemandu Wisata">Pemandu Wisata</option>
+                                    <option value="Antropolog">Antropolog</option>
+                                    <option value="Wasit">Wasit</option>
+                                    <option value="DevOps Engineer">DevOps Engineer</option>
+                                    <option value="Analis Saham">Analis Saham</option>
+                                    <option value="Analis Data">Analis Data</option>
+                                    <option value="Produser Film">Produser Film</option>
+                                    <option value="Editor">Editor</option>
+                                    <option value="Atlet">Atlet</option>
+                                    <option value="Sopir">Sopir</option>
+                                    <option value="Seniman">Seniman</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                    <option value="Teknisi Medis">Teknisi Medis</option>
+                                    <option value="Dosen">Dosen</option>
+                                    <option value="Nelayan">Nelayan</option>
+                                    <option value="Penulis">Penulis</option>
+                                    <option value="Network Engineer">Network Engineer</option>
+                                    <option value="Tentara">Tentara</option>
+                                    <option value="Psikolog">Psikolog</option>
+                                    <option value="Wirausahawan">Wirausahawan</option>
+                                    <option value="Komedian">Komedian</option>
+                                    <option value="Desainer Interior">Desainer Interior</option>
+                                    <option value="Ahli Biologi">Ahli Biologi</option>
+                                    <option value="Bankir">Bankir</option>
+                                    <option value="Astronom">Astronom</option>
+                                    <option value="Investor">Investor</option>
+                                    <option value="Ahli Konservasi">Ahli Konservasi</option>
+                                    <option value="Musisi">Musisi</option>
+                                    <option value="Content Creator">Content Creator</option>
+                                    <option value="Podcaster">Podcaster</option>
+                                    <option value="Administrator Database">Administrator Database</option>
+                                    <option value="Ahli Statistik">Ahli Statistik</option>
+                                    <option value="Event Organizer">Event Organizer</option>
+                                    <option value="Tukang Las">Tukang Las</option>
+                                    <option value="Sutradara">Sutradara</option>
+                                    <option value="Geolog">Geolog</option>
+                                    <option value="Urban Planner">Urban Planner</option>
+                                    <option value="Peternak">Peternak</option>
+                                    <option value="Manajer Proyek">Manajer Proyek</option>
+                                    <option value="Influencer">Influencer</option>
+                                    <option value="Teknisi Laboratorium">Teknisi Laboratorium</option>
+                                    <option value="Guru">Guru</option>
+                                  </select>
                                 </div>
                             </div>
                 
                               <!-- Pekerjaan -->
                             <div class="mb-4">
-                                <label for="pekerjaan" class="form-label">Pekerjaan</label>
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="pekerjaan"
-                                       name="pekerjaan"
-                                       placeholder="Contoh: Mahasiswa, PNS, dll"
-                                       maxlength="100">
+                                <label for="usia" class="form-label">Usia</label>
+                                  <input type="number" 
+                                         class="form-control" 
+                                         id="usia"
+                                         name="usia"
+                                         min="15"
+                                         max="70">
                             </div>
                 
                               <!-- Status Nikah Radio -->
@@ -195,7 +393,9 @@
       </div>
   </footer>
     <script type="module" src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
        
 </body>
 </html>

@@ -62,7 +62,6 @@ body {
     background-size: cover;
     background-position: center center;
     animation: bgchange 20s ease-in-out infinite;
-    overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 5px;
@@ -136,6 +135,11 @@ body {
 .form-column {
     width: 100%;
 }
+.bootstrap-select .dropdown-menu.inner {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 .button {
     display: flex;
     justify-content: flex-start;
