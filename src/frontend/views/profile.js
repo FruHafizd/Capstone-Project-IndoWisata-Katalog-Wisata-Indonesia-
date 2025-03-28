@@ -22,7 +22,7 @@ function render_profile(data) {
     const container = document.getElementById('container');
     container.innerHTML = `
       <div class="profile-card">
-        <div class="title">
+        <div class="title" style="text-align: center; margin-bottom: 20px;">
             <h1>My Profile</h1>
         </div>
         <div class="profile-container">
@@ -52,8 +52,8 @@ function render_profile(data) {
                     <label>Status Nikah</label>
                     <div class="form-control">${data.marital_status}</div>
                 </div>
-                <button class="button" id="edit-profile">Edit Profile</button>
-                <button class="button" id="edit-password">Ganti Password</button>
+                <button class="button" id="edit-profile" ><i class="fa-solid fa-user"></i><h2>Edit Profile</h2></button>
+                <button class="button" id="edit-password"><i class="fa-solid fa-lock"></i><h2>Ganti Password</h2></button>
             </form>
         </div>
       </div>
@@ -109,7 +109,8 @@ function render_edit_profile(data) {
                         <label class="form-check-label" for="belum_menikah">Belum Menikah</label>
                     </div>
                 </div>
-                <button type="button" class="button" id="save-profile">Simpan</button>
+                <button type="button" class="button" id="save-profile" style="display: flex; justify-content: center; align-items: center; padding: 10px">Simpan</button>
+                <button type="button" class="button" onclick="window.location.href='profile.html'" style="display: flex; justify-content: center; align-items: center; padding: 10px">Cancel</button>
             </form>
         </div>
     </div>`;
@@ -152,10 +153,12 @@ function render_edit_password() {
     const container = document.getElementById('container');
     container.innerHTML = `
       <div class="profile-card">
-        <div class="profile-container" style="display: flex; gap: 20px;">
+        <div class="profile-container">
           <!-- Kolom Form -->
           <div class="form-column" style="flex: 1;">
-            <h2>Ganti Password</h2>
+            <div class="title" style="text-align: center; margin-bottom: 20px; color: #333;">
+                <h1>Ganti Password</h1>
+            </div>
             <form id="edit-password-form">
               <div class="form-group">
                 <label>Password Lama</label>
@@ -165,7 +168,8 @@ function render_edit_password() {
                 <label>Password Baru</label>
                 <input type="password" class="form-control" id="newPassword" placeholder="Masukkan password baru">
               </div>
-              <button type="button" class="button" id="save-password">Simpan Password</button>
+              <button type="button" class="button" id="save-password" style="display: flex; justify-content: center; align-items: center; padding: 10px">Simpan Password</button>
+              <button type="button" class="button" onclick="window.location.href='profile.html'" style="display: flex; justify-content: center; align-items: center; padding: 10px">Cancel</button>
             </form>
           </div>
           <!-- Kolom Pesan Error -->

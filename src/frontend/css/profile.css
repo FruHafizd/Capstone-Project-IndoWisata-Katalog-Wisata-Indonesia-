@@ -59,16 +59,46 @@ body {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/1.jpg);
     width: 50%;
     background-repeat: no-repeat;
-    background-size: cover 700px;
+    background-size: cover;
     background-position: center center;
+    animation: bgchange 20s ease-in-out infinite;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@keyframes bgchange {
+    0% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/1.jpg);
+    }
+    20% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/1.jpg);
+    }
+    25% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/2.jpg);
+    }
+    45% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/2.jpg);
+    }
+    50% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/3.jpg);
+    }
+    70% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/3.jpg);
+    }
+    75% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/4.jpg);
+    }
+    90% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(7, 7, 7, 0.5)), url(../image/4.jpg);
+    }
 }
 .title {
     color: white;
-    font-size: 30px;
+    font-size: 10px;
     font-weight: 600;
     padding: 50px;
     display: flex;
@@ -76,9 +106,9 @@ body {
     align-items: center;
 }
 .profile-container {
-    width: 100%;
+    width: 80%;
     background: white;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
@@ -103,12 +133,32 @@ body {
     text-align: left;
     margin-bottom: 15px;
 }
+.form-column {
+    width: 100%;
+}
 .button {
+    display: flex;
+    justify-content: flex-start;
+    align-self: center;
     width: 100%;
     background: #000000;
     color: white;
     border-radius: 5px;
-    padding: 10px;
+    margin: 10px 0 10px 0;
+    transition: 0.3s;
+    padding: 10px 0 1px 10px;
+}
+.button i {
+    padding: 3px 20px 0 0;
+    padding: none;
+}
+.button h2 {
+    font-size: 20px;
+    padding: none;
+}
+.button:hover {
+    background: #ffffff;
+    color: #000000;
 }
 .footer {
     color: rgb(0, 0, 0);
