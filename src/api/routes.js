@@ -149,6 +149,22 @@ const wisataRoutes = [
     path: '/api/users/{id}/password',
     handler: usersHandler.updatePasswordHandler,
   },
+  // reset password
+  { 
+    method: 'POST', 
+    path: '/api/users/request-reset', 
+    handler: usersHandler.requestResetHandler,
+  },
+  { 
+    method: 'POST', 
+    path: '/api/users/verify-token', 
+    handler: usersHandler.verifyTokenHandler,
+  },
+  { 
+    method: 'POST', 
+    path: '/api/users/reset-password', 
+    handler: usersHandler.resetPasswordHandler,
+  }
 ];
 
 module.exports = wisataRoutes;

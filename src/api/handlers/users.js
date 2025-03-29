@@ -3,6 +3,9 @@ const {
   UserUpdateSchema,
 } = require("../../utils/validators/users");
 const ClientError = require("../../errors/client-error");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
 
 class UsersHandler {
   constructor(service) {
@@ -15,7 +18,10 @@ class UsersHandler {
       "getUserByIdHandler",
       "updateUserHandler",
       "deleteUserHandler",
-      "updatePasswordHandler"
+      "updatePasswordHandler",
+      "requestResetHandler",
+      "verifyTokenHandler",
+      "resetPasswordHandler",
     ];
     methods.forEach((method) => {
       this[method] = this[method].bind(this);
@@ -249,8 +255,102 @@ class UsersHandler {
       }).code(400);
     }
   }
-  
-  
+  // reset password
+
+  async requestResetHandler(request, h) {
+    try {
+      const { email } = request.payload;
+
+      // Cek apakah email ada di database
+      const user = await this._service.getUserByEmail(email);
+      if (!user) {
+        throw new Error("Email tidak ditemukan");
+      }
+
+      // Buat token reset password
+      const token = jwt.sign({ email: user.email }, "RAHASIA_RESET", {
+        expiresIn: "15m",
+      });
+
+      // Simpan token ke database
+      await this._service.storeResetToken(user.id, token);
+
+      // Kirim email
+      await this._sendResetEmail(user.email, token);
+
+      return h.response({
+        status: "success",
+        message: "Permintaan reset password telah dikirim ke email",
+      }).code(200);
+    } catch (error) {
+      return h.response({
+        status: "fail",
+        message: error.message,
+      }).code(400);
+    }
+  }
+
+  async verifyTokenHandler(request, h) {
+    try {
+      const { token } = request.payload;
+
+      // Verifikasi token
+      const decoded = jwt.verify(token, "RAHASIA_RESET");
+
+      return h.response({
+        status: "success",
+        message: "Token valid",
+        data: { email: decoded.email },
+      }).code(200);
+    } catch (error) {
+      return h.response({
+        status: "fail",
+        message: "Token tidak valid atau telah kedaluwarsa",
+      }).code(400);
+    }
+  }
+
+  async resetPasswordHandler(request, h) {
+    try {
+      const { token, newPassword } = request.payload;
+
+      // Verifikasi token
+      const decoded = jwt.verify(token, "RAHASIA_RESET");
+
+      // Perbarui password
+      await this._service.updatePasswordByEmail(decoded.email, newPassword);
+
+      return h.response({
+        status: "success",
+        message: "Password berhasil direset",
+      }).code(200);
+    } catch (error) {
+      return h.response({
+        status: "fail",
+        message: "Gagal mereset password",
+      }).code(400);
+    }
+  }
+
+  async _sendResetEmail(email, token) {
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Reset Password Anda",
+      text: `Klik tautan berikut untuk mereset password Anda: http://localhost:3000/reset-password?token=${token}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+  }
+
 }
 
 module.exports = UsersHandler;

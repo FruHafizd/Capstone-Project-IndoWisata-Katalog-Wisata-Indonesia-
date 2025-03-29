@@ -1,7 +1,9 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const ClientError = require("../../errors/client-error");
+const nodemailer = require("nodemailer");
 
 
 class UsersService {
@@ -160,6 +162,53 @@ class UsersService {
     }
     return updateResult.rows[0].id;
   }
+
+  // reset password
+
+  async resetPassword(token, newPassword) {
+    const userId = await this.verifyToken(token);
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const query = {
+      text: "UPDATE users SET password = $1, reset_token = NULL WHERE id = $2 RETURNING id",
+      values: [hashedPassword, userId],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new Error("Gagal mereset password");
+    }
+    return result.rows[0].id;
+  }
+
+  async _sendResetEmail(email, token) {
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Reset Password Anda",
+      text: `Klik tautan berikut untuk mereset password Anda: http://localhost:3000/reset-password?token=${token}`,
+    };
+    await transporter.sendMail(mailOptions);
+  }
+  async storeResetToken(email, token) {
+    const query = {
+      text: "UPDATE users SET reset_token = $1 WHERE email = $2 RETURNING id",
+      values: [token, email],
+    };
+  
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new Error("Email tidak ditemukan");
+    }
+  
+    return result.rows[0].id;
+  }
+  
   
 
 }
