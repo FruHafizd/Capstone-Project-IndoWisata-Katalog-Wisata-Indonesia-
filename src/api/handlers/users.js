@@ -263,17 +263,20 @@ class UsersHandler {
 
       // Cek apakah email ada di database
       const user = await this._service.getUserByEmail(email);
+      console.log(user)
       if (!user) {
         throw new Error("Email tidak ditemukan");
+      };
+      // buat token
+      function generateToken() {
+        return Math.floor(1000 + Math.random() * 9000); // Hasil: 1000 - 9999
       }
 
-      // Buat token reset password
-      const token = jwt.sign({ email: user.email }, "RAHASIA_RESET", {
-        expiresIn: "15m",
-      });
+      const token = generateToken();
 
       // Simpan token ke database
-      await this._service.storeResetToken(user.id, token);
+      console.log(user.id)
+      await this._service.storeResetToken(user.email, token);
 
       // Kirim email
       await this._sendResetEmail(user.email, token);
@@ -292,45 +295,36 @@ class UsersHandler {
 
   async verifyTokenHandler(request, h) {
     try {
-      const { token } = request.payload;
+      const { email, token } = request.payload;
 
-      // Verifikasi token
-      const decoded = jwt.verify(token, "RAHASIA_RESET");
+      // Panggil verifyToken dari service
+      const result = await this._service.verifyToken(email, token);
 
-      return h.response({
-        status: "success",
-        message: "Token valid",
-        data: { email: decoded.email },
-      }).code(200);
+      return h.response(result).code(200);
     } catch (error) {
       return h.response({
         status: "fail",
-        message: "Token tidak valid atau telah kedaluwarsa",
+        message: error.message,
       }).code(400);
     }
   }
 
   async resetPasswordHandler(request, h) {
     try {
-      const { token, newPassword } = request.payload;
+        const { email, token, newPassword } = request.payload;
+        await this._service.resetPassword(email, token, newPassword);
 
-      // Verifikasi token
-      const decoded = jwt.verify(token, "RAHASIA_RESET");
-
-      // Perbarui password
-      await this._service.updatePasswordByEmail(decoded.email, newPassword);
-
-      return h.response({
-        status: "success",
-        message: "Password berhasil direset",
-      }).code(200);
+        return h.response({
+            status: 'success',
+            message: 'Password berhasil direset',
+        }).code(200);
     } catch (error) {
-      return h.response({
-        status: "fail",
-        message: "Gagal mereset password",
-      }).code(400);
+        return h.response({
+            status: 'fail',
+            message: error.message,
+        }).code(400);
     }
-  }
+}
 
   async _sendResetEmail(email, token) {
     const transporter = nodemailer.createTransport({
