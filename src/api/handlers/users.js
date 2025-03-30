@@ -339,7 +339,7 @@ class UsersHandler {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Reset Password Anda",
-      text: `Klik tautan berikut untuk mereset password Anda: http://localhost:3000/reset-password?token=${token}`,
+      text: `Reset token password anda ${token}`,
     };
 
     await transporter.sendMail(mailOptions);
