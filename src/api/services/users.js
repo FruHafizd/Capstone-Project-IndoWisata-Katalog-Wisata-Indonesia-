@@ -1,7 +1,9 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const ClientError = require("../../errors/client-error");
+const nodemailer = require("nodemailer");
 
 
 class UsersService {
@@ -160,6 +162,116 @@ class UsersService {
     }
     return updateResult.rows[0].id;
   }
+
+  // reset password
+
+  async resetPassword(email, token, newPassword) {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+        throw new Error("Email tidak ditemukan");
+    }
+    
+    console.log("User ditemukan:", user);
+    console.log("Stored Token di DB:", user.reset_token);
+    console.log("Input Token:", token);
+
+    // Cek apakah token cocok
+    if (!user.reset_token || user.reset_token !== token.toString()) {
+        throw new Error("Token tidak valid atau telah kedaluwarsa");
+    }
+
+    // Hash password baru
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update password di database
+    const query = {
+        text: "UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE email = $2 RETURNING id",
+        values: [hashedPassword, email],
+    };
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+        throw new Error("Gagal mereset password");
+    }
+
+    return result.rows[0].id;
+}
+
+
+
+  async _sendResetEmail(email, token) {
+    const transporter = nodemailer.createTransport({
+        service: process.env.EMAIL_SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Reset Password Anda",
+        text: `Token reset password anda adalah ${token}`,
+    };
+
+    console.log("📧 Mengirim email ke:", email);
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ Email berhasil dikirim:", info.response);
+    } catch (error) {
+        console.error("❌ Gagal mengirim email:", error);
+    }
+}
+  async storeResetToken(email, token) {
+    console.log("Menyimpan token untuk:", email); // Debugging
+
+    const query = {
+        text: "UPDATE users SET reset_token = $1, reset_token_expiry = NOW() + INTERVAL '1 hour' WHERE email = $2 RETURNING id",
+        values: [token, email],
+    };
+
+    const result = await this._pool.query(query);
+
+    console.log("Hasil Query:", result.rows); // Debugging
+
+    if (!result.rowCount) {
+        throw new Error("Email tidak ditemukan");
+    }
+
+    return result.rows[0].id;
+}
+async verifyToken(email, token) {
+  const query = {
+    text: "SELECT reset_token, reset_token_expiry FROM users WHERE email = $1",
+    values: [email],
+  };
+
+  const result = await this._pool.query(query);
+
+  if (result.rowCount === 0) {
+    throw new Error("Email tidak ditemukan");
+  }
+
+  const { reset_token, reset_token_expiry } = result.rows[0];
+
+  console.log("Stored Token di DB:", reset_token);
+  console.log("Input Token:", token);
+
+  // Cek apakah token cocok
+  if (!reset_token || reset_token !== token.toString()) {
+    throw new Error("Token tidak valid atau telah kedaluwarsa");
+  }
+
+  // Cek apakah token sudah kedaluwarsa
+  if (new Date(reset_token_expiry) < new Date()) {
+    throw new Error("Token sudah kedaluwarsa");
+  }
+
+  return { status: "success", message: "Token valid" };
+}
+
+
   
 
 }

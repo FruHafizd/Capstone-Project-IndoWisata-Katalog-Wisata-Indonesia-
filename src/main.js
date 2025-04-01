@@ -6,6 +6,7 @@ import initprofile from './frontend/views/profile.js';
 import './frontend/js/userStatus.js';
 import './frontend/js/login.js';
 import './frontend/js/register.js';
+import init_reset from './frontend/views/reset.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   // Cek apakah user sudah login
@@ -29,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
         initDetail();
   } else if (window.location.pathname.includes("profile.html")){
         initprofile();
+  } else if (window.location.pathname.includes("reset.html")){
+      init_reset();
   }
   else if (
       window.location.pathname.includes("index.html") ||
