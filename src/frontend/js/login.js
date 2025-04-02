@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.replace("index.html");
     return;
   }
+
   const loginForm = document.getElementById('loginForm');
   if (!loginForm) {
     console.error('Form login tidak ditemukan.');
@@ -16,11 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Ambil input dan elemen error
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
+    const loginError = document.getElementById('loginError');
 
-    if (!email || !password) {
-      alert('Email dan password harus diisi!');
+    // Reset pesan error
+    loginError.innerHTML = "";
+
+    // Validasi input kosong
+    let errors = [];
+    if (!email) errors.push("Email wajib diisi.");
+    if (!password) errors.push("Password wajib diisi.");
+
+    if (errors.length > 0) {
+      loginError.innerHTML = errors.join("<br>");
       return;
     }
 
@@ -33,20 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok && data.status === 'success') {
-        alert('Login berhasil!');
-        // Simpan token dan nama user ke localStorage
+        // Simpan token dan redirect jika login sukses
         localStorage.setItem('token', data.data.token);
         localStorage.setItem('userName', data.data.name);
-        localStorage.setItem('id', data.data.id); // Ambil langsung dari response login
-        window.location.href = 'index.html'; // Ubah URL redirect jika diperlukan
-        document.addEventListener("DOMContentLoaded", () => {
-        });
+        localStorage.setItem('id', data.data.id);
+        window.location.href = 'index.html';
       } else {
-        alert(data.message || 'Login gagal, periksa kembali email dan password Anda.');
-      }      
+        // Tampilkan error di satu tempat
+        loginError.innerHTML = data.message || "Email atau password salah.";
+      }
     } catch (error) {
       console.error('Error saat login:', error);
-      alert('Terjadi kesalahan saat melakukan login.');
+      loginError.innerHTML = "Terjadi kesalahan saat melakukan login.";
     }
   });
 });
