@@ -326,24 +326,28 @@ class UsersHandler {
     }
 }
 
-  async _sendResetEmail(email, token) {
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+async _sendResetEmail(email, token) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST, // Gunakan host dari environment variable
+    port: process.env.EMAIL_PORT, // Gunakan port dari environment variable
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Reset Password Anda",
-      text: `Reset token password anda ${token}`,
-    };
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Reset Password Anda",
+    text: `Reset token password anda: ${token}\n\nToken akan kadaluarsa dalam 1 jam.`,
+    // Anda bisa menambahkan versi HTML
+    html: `<p>Reset token password anda: <strong>${token}</strong></p>
+           <p>Token akan kadaluarsa dalam 1 jam.</p>`
+  };
 
-    await transporter.sendMail(mailOptions);
-  }
+  await transporter.sendMail(mailOptions);
+}
 
 }
 
