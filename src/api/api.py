@@ -10,14 +10,14 @@ app = FastAPI()
 # Middleware CORS untuk mengizinkan akses dari frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Ganti dengan domain frontend jika sudah deploy
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# === Load model saat startup ===
-model_path = os.path.join(os.path.dirname(__file__), '../../model.pkl')
+# === Load model ===
+model_path = os.path.join(os.path.dirname(__file__), '../ml/model.pkl')
 
 try:
     with open(model_path, 'rb') as model_file:
@@ -40,7 +40,7 @@ except Exception as e:
 def read_root():
     return JSONResponse(content={"message": "🎉 IndoWisata API is running!"})
 
-# === Endpoint rekomendasi (sudah diperbaiki) ===
+# === Endpoint rekomendasi ===
 @app.get("/recommendations/{user_id}")
 def get_recommendations(user_id: str, top_n: int = 10):
     if user_id not in user_ids:
