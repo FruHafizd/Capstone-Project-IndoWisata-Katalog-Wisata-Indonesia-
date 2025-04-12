@@ -1,6 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const wisata = urlParams.get("id");
 
+
 // Endpoint API untuk detail wisata
 const api_detail = "http://localhost:3000/api/wisata";
 

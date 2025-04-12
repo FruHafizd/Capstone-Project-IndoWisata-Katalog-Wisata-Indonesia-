@@ -1,4 +1,16 @@
-const api_top = "http://localhost:3000/api/wisata/top";
+let api_top = "";
+
+const id = localStorage.getItem("id");
+const recom = document.getElementById("recomendation")
+
+if (id) {
+  api_top = `http://localhost:3000/api/wisata/recommendation`;
+  recom.innerHTML = `Recommendation`
+} else {
+  api_top = "http://localhost:3000/api/wisata/top";
+  recom.innerHTML = `Top Destination`
+}
+
 
 
 const categoryMapping = {
