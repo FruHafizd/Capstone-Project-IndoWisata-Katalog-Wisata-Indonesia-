@@ -1,3 +1,5 @@
+import '../../frontend/css/detail.css';
+
 const urlParams = new URLSearchParams(window.location.search);
 const wisata = urlParams.get("id");
 
@@ -149,7 +151,8 @@ function initDetail() {
   }
 }
 
-// Hapus event listener DOMContentLoaded di sini
-// karena pemanggilan initDetail() sudah diatur di main.js
+document.addEventListener('DOMContentLoaded', () => {
+  initDetail();
+});
 
 export default initDetail;
