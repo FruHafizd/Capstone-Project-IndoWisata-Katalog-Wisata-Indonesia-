@@ -1,17 +1,4 @@
-let api_top = "";
-
-const id = localStorage.getItem("id");
-const recom = document.getElementById("recomendation")
-
-if (id) {
-  api_top = `http://localhost:3000/api/wisata/recommendation`;
-  recom.innerHTML = `Recommendation`
-} else {
-  api_top = "http://localhost:3000/api/wisata/top";
-  recom.innerHTML = `Top Destination`
-}
-
-
+const api_top = "http://localhost:3000/api/wisata/top";
 
 const categoryMapping = {
   "cat_LgHRkZdANPDP6ttv": "ALAM",
@@ -35,10 +22,9 @@ function convertRatingToStars(rating) {
          (halfStar ? halfStarIcon : '') +
          emptyStarIcon.repeat(emptyStars);
 }
-  
+
 // Fungsi untuk merender data top wisata ke dalam grid
 function render_all(data = []) {
-  console.log(data)
   const container = document.querySelector('.grid-container');
   if (!container) return;
   
@@ -102,7 +88,7 @@ async function fetch_top() {
 }
 
 // Fungsi untuk menginisialisasi Google Maps
-function initMap() {
+async function initMap() {
   const mapContainer = document.getElementById("map");
   if (!mapContainer) return;
   

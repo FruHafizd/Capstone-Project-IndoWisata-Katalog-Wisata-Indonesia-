@@ -3,6 +3,8 @@ const API_LOGIN_URL = 'http://localhost:3000/api/login';
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem("token");
 
+  if (!window.location.pathname.includes("login.html")) return;
+
   if (token && window.location.pathname.includes("login.html")) {
     window.location.replace("index.html");
     return;

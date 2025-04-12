@@ -40,6 +40,7 @@ function render_create_token (){
                 body: JSON.stringify({ email }),
             });
             const data = await response.json();
+            console.log(data);
             // Cek apakah respons sukses
             if (response.ok) {
                 console.log("Token sudah terkirim, cek email Anda");
