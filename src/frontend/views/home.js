@@ -1,5 +1,13 @@
 const api_top = "http://localhost:3000/api/wisata/top";
 
+
+const categoryMapping = {
+  "cat_LgHRkZdANPDP6ttv": "ALAM",
+  "cat_DLQ8lcmAe9GedORf": "KULINER",
+  "cat_NWLIqpq6cnjunZ5X": "SEJARAH",
+  "cat_oAsRjVBqyzmI-tBA": "KELUARGA",
+  "cat_QCJZ9eD5PbAbDIv4": "LAINNYA"
+};
 // Fungsi untuk mengonversi rating ke ikon bintang
 function convertRatingToStars(rating) {
   const numericRating = parseFloat(rating) || 0;
@@ -18,6 +26,7 @@ function convertRatingToStars(rating) {
   
 // Fungsi untuk merender data top wisata ke dalam grid
 function render_all(data = []) {
+  console.log(data)
   const container = document.querySelector('.grid-container');
   if (!container) return;
   
@@ -26,15 +35,24 @@ function render_all(data = []) {
     return;
   }
 
-  container.innerHTML = data.map(item => `
-    <div class="grid-item" data-id="${item.id}">
-      <img src="${item.image_url || 'frontend/image/lava.webp'}" alt="${item.name || 'Wisata'}">
-      <h3>${item.name || 'N/A'}</h3>
-      <div class="rating">
-        <b>${item.rating || 'N/A'}</b> ${convertRatingToStars(item.rating)}
+  container.innerHTML = data.map(item => {
+    // Cek properti gambar: image_url (search) atau imageUrl (top)
+    const image = item.image_url || item.imageUrl || 'frontend/image/lava.webp';
+    // Cek kategori: gunakan mapping untuk mengonversi id ke nama
+    const catId = item.category || item.category_id || '';
+    const catName = categoryMapping[catId] || catId;
+    
+    return `
+      <div class="grid-item" data-id="${item.id}">
+          <img src="${image}" alt="${item.name || 'Wisata'}">
+          <h3>${item.name || 'N/A'}</h3>
+          <div class="rating">
+            <b>${item.rating || 'N/A'}</b> ${convertRatingToStars(item.rating)}
+          </div>
+          ${ catName ? `<p class="category">${catName}</p>` : '' }
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
   
   // Tambahkan event listener pada setiap grid-item agar ketika diklik, diarahkan ke halaman detail
   const items = document.querySelectorAll('.grid-item');
