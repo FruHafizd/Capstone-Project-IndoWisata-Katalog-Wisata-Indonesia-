@@ -1,3 +1,6 @@
+import '../../frontend/css/style.css';
+import '../../frontend/css/register.css';
+
 // Base URL untuk endpoint register user
 const API_USERS_URL = 'http://localhost:3000/api/users';
 

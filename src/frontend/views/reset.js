@@ -1,3 +1,6 @@
+import '../../frontend/css/style.css';
+import '../../frontend/css/login.css';
+
 const create_token = "http://localhost:3000/api/users/request-reset"
 const reset_password = "http://localhost:3000/api/users/reset-password"
 
@@ -127,5 +130,9 @@ function render_input_token() {
 function init_reset() {
     render_create_token();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  init_reset();
+});
 
 export default init_reset;

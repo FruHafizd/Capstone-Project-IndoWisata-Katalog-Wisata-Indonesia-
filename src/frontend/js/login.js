@@ -1,3 +1,6 @@
+import '../../frontend/css/style.css';
+import '../../frontend/css/login.css';
+
 const API_LOGIN_URL = 'http://localhost:3000/api/login';
 
 document.addEventListener('DOMContentLoaded', () => {
