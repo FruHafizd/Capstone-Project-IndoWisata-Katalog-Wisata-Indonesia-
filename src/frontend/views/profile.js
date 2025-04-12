@@ -1,3 +1,5 @@
+import '../../frontend/css/profile.css';
+
 const api_profile = "http://localhost:3000/api/users";
 const id = localStorage.getItem("id");
 
@@ -459,5 +461,10 @@ function initprofile (){
         fetch_profile();
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    initprofile();
+});
+
 
 export default initprofile;
