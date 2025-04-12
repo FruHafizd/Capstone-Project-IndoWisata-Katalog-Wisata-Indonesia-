@@ -1,7 +1,7 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-
+import '../js/userStatus.js';
 import '../../frontend/css/category.css';
 const urlParams = new URLSearchParams(window.location.search);
 const category = urlParams.get('id'); // Ambil ID kategori dari URL

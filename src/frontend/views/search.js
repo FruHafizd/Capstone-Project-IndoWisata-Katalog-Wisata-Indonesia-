@@ -3,6 +3,7 @@ import '../../frontend/css/search.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
+import '../js/userStatus.js';
 const api_all = "http://localhost:3000/api/wisata";
 const api_search = "http://localhost:3000/api/wisata/search";
 
