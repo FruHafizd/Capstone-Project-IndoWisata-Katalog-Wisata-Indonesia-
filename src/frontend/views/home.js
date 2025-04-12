@@ -1,7 +1,4 @@
 import '../../frontend/css/style.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'font-awesome/css/font-awesome.min.css';
 const api_top = "http://localhost:3000/api/wisata/top";
 
 // Fungsi untuk mengonversi rating ke ikon bintang
