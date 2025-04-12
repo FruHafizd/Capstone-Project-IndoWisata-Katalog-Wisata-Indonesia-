@@ -1,3 +1,8 @@
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';
+
+import '../../frontend/css/category.css';
 const urlParams = new URLSearchParams(window.location.search);
 const category = urlParams.get('id'); // Ambil ID kategori dari URL
 
@@ -135,5 +140,9 @@ function initCategory() {
         fetch_all_category();
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    initCategory();
+});
 
 export default initCategory;
