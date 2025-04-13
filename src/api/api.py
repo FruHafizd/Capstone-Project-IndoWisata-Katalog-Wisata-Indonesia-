@@ -4,10 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import pickle
 import os
 import numpy as np
+import pandas as pd
 
 app = FastAPI()
 
-# Middleware CORS untuk mengizinkan akses dari frontend
+# Middleware CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -18,6 +19,7 @@ app.add_middleware(
 
 # === Load model ===
 model_path = os.path.join(os.path.dirname(__file__), '../ml/model.pkl')
+csv_path = 'src/ml/datasets/wisata_indonesia.csv'
 
 try:
     with open(model_path, 'rb') as model_file:
@@ -30,26 +32,26 @@ try:
     attribute_df = model["attribute_df"]
     attribute_similarity = model["attribute_similarity"]
 
-    print("✅ Model berhasil dimuat.")
+    wisata_df = pd.read_csv(csv_path)
+
+    print("✅ Model dan CSV berhasil dimuat.")
 except Exception as e:
-    print(f"❌ Gagal memuat model: {e}")
+    print(f"❌ Gagal memuat model atau CSV: {e}")
     raise e
 
-# === Endpoint default ===
 @app.get("/")
 def read_root():
     return JSONResponse(content={"message": "🎉 IndoWisata API is running!"})
 
 # === Endpoint rekomendasi ===
 @app.get("/recommendations/{user_id}")
-def get_recommendations(user_id: str, top_n: int = 10):
+def get_recommendations(user_id: str, top_n: int = 15):
     if user_id not in user_ids:
         raise HTTPException(status_code=404, detail="User ID tidak ditemukan dalam model.")
 
     user_index = user_ids.index(user_id)
     similarities = user_similarity[user_index]
-
-    similar_users_indices = np.argsort(similarities)[::-1][1:]  # skip dirinya sendiri
+    similar_users_indices = np.argsort(similarities)[::-1][1:]  
 
     recommended_places = {}
     user_visited_places = set(visit_df.columns[visit_df.loc[user_id] > 0])
@@ -67,10 +69,29 @@ def get_recommendations(user_id: str, top_n: int = 10):
     sorted_recommendations = sorted(recommended_places.items(), key=lambda x: x[1], reverse=True)
     top_recommendations = [place for place, score in sorted_recommendations[:top_n]]
 
+    # Ambil detail tempat dari CSV
+    recommended_places_detail = []
+    for place_id in top_recommendations:
+        place_info = wisata_df[wisata_df["name"] == place_id]
+
+        if not place_info.empty:
+            tempat = {
+                "id": place_info["id"].values[0],
+                "name": place_info["name"].values[0],
+                "category_id": place_info["category_id"].values[0],
+                "address": place_info["address"].values[0],
+                "rating": place_info["rating"].values[0],
+                "location": place_info["location"].values[0],
+                "image_url": place_info["Image_url"].values[0],
+            }
+            recommended_places_detail.append(tempat)
+        else:
+            print(f"⚠️ Tempat '{place_id}' tidak ditemukan dalam CSV.")
+
     return {
         "status": "success",
+        "message": f"Top rekomendasi untuk {user_id}",
         "data": {
-            "user_id": user_id,
-            "recommendations": top_recommendations
+            "places": recommended_places_detail
         }
     }
