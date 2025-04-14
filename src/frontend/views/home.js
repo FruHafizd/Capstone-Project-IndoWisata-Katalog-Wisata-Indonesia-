@@ -1,4 +1,7 @@
 const api_top = "http://localhost:3000/api/wisata/top";
+const api_recom = "http://localhost:3000/api/"
+
+const id = localStorage.getItem("id");
 
 const categoryMapping = {
   "cat_LgHRkZdANPDP6ttv": "ALAM",
@@ -29,7 +32,7 @@ function render_all(data = []) {
   if (!container) return;
   
   if (data.length === 0) {
-    container.innerHTML = "<p>Tidak ada data wisata yang tersedia.</p>";
+    container.innerHTML = `<span class="loader"></span>`;
     return;
   }
 
@@ -86,6 +89,29 @@ async function fetch_top() {
     }
   }
 }
+async function fetch_recom() {
+  const container = document.querySelector('.grid-container');
+  if (container) {
+    container.innerHTML = "<p>Memuat data wisata...</p>";
+  }
+  
+  try {
+    const response = await fetch(`${api_recom}${id}`);
+    if (!response.ok) {
+      throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
+    }
+    const result = await response.json();
+    if (result.status !== "success" || !result.data || !result.data.places) {
+      throw new Error("Format data tidak valid");
+    }
+    render_all(result.data.places);
+  } catch (error) {
+    console.error(error);
+    if (container) {
+      container.innerHTML = `<p>Gagal memuat data wisata. Error: ${error.message}</p>`;
+    }
+  }
+}
 
 // Fungsi untuk menginisialisasi Google Maps
 async function initMap() {
@@ -106,7 +132,11 @@ async function initMap() {
 function initHome() {
   // Panggil initMap dan fetch_top setelah DOM siap
   initMap();
-  fetch_top();
+  if (!id || id.trim() === "") {
+    fetch_top();
+  } else {
+    fetch_recom();
+  }
 }
 
 export default initHome;

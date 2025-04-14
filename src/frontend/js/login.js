@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok && data.status === 'success') {
         // Simpan token dan redirect jika login sukses
+        alert("Login berhasil!");
         localStorage.setItem('token', data.data.token);
         localStorage.setItem('userName', data.data.name);
         localStorage.setItem('id', data.data.id);

@@ -3,7 +3,7 @@ const id = localStorage.getItem("id");
 
 async function fetch_profile() {
     const container = document.getElementById('container');
-    container.innerHTML = "<p>Memuat data profile...</p>";
+    container.innerHTML = `<span class="loader"></span>`;
     try {
         const response = await fetch(`${api_profile}/${id}`);
         if (!response.ok) {

@@ -27,7 +27,7 @@ async function updateUserVisit(placeId) {
 async function fetch_wisata_detail(id) {
   const container = document.getElementById("detail-container");
   if (!container) return;
-  container.innerHTML = "<p>Memuat detail wisata...</p>";
+  container.innerHTML = `<span class="loader"></span>`;
   try {
     const response = await fetch(`${api_detail}/${id}`);
     if (!response.ok) {

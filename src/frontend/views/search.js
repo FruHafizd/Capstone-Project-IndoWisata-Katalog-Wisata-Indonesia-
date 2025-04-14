@@ -37,7 +37,7 @@ async function fetch_search(query) {
   
 // Fungsi untuk mengambil semua data wisata (saat halaman pertama kali dimuat)
 async function fetch_all() {
-    container.innerHTML = "<p>Memuat data wisata...</p>";
+    container.innerHTML = `<span class="loader"></span>`;
   
     try {
         const response = await fetch(api_all);

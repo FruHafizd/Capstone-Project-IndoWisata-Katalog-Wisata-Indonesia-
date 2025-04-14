@@ -38,7 +38,7 @@ function convertRatingToStars(rating) {
 
 async function fetch_all_category() {
     const grid = document.getElementById("grid-container-category")
-    grid.innerHTML=`<p>Memuat category wisata...</p>`
+    grid.innerHTML=`<span class="loader"></span>`;
     try {
         const response = await fetch(api_categories);
         if (!response.ok) {
