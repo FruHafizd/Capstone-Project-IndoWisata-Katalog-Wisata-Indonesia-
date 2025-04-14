@@ -19,6 +19,6 @@ IndoWisata adalah platform digital berbasis web yang menyediakan informasi, penc
 | Backend             | Hapi.js (Node.js)                             |
 | Database            | Supabase (PostgreSQL)                         |
 | Rekomendasi         | Python, Scikit-learn, Pickle                  |
-| Tools & DevOps      | VSCode, Postman, Git, Supabase Studio         |
+| Tools               | VSCode, Postman, Git, Supabase Studio         |
 
 ---
