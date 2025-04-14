@@ -15,7 +15,7 @@ IndoWisata adalah platform digital berbasis web yang menyediakan informasi, penc
 
 | Komponen             | Teknologi                                     |
 |---------------------|-----------------------------------------------|
-| Frontend            | HTML, CSS (Bootstrap), JavaScript, Axios      |
+| Frontend            | HTML, CSS (Bootstrap), JavaScript             |
 | Backend             | Hapi.js (Node.js)                             |
 | Database            | Supabase (PostgreSQL)                         |
 | Rekomendasi         | Python, Scikit-learn, Pickle                  |
