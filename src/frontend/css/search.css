@@ -47,15 +47,28 @@ body {
     font-size: 16px;
     width: 250px; 
 }
-.search-btn {
-    margin-left: 10px;
-    background-color: black;
+
+.search-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .search-btn {
+    background-color: #222;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
-}
+    transition: background-color 0.3s;
+    transition: 2s ease-in-out;
+  }
+  
+  .search-btn:hover {
+    background-color: #444;
+  }
+  
 .dst .title2 h1 {
     width: 70%;
     padding-bottom: 50px;
@@ -141,6 +154,45 @@ body {
     padding-bottom: 20px;
     padding-left: 10px;
 }
+.loader {
+      width: 64px;
+      height: 64px;
+      position: relative;
+      background: #FFF;
+      border-radius: 50%;
+      border: #222 2px solid;
+      transform: rotate(45deg);
+      animation: rotate 2s linear infinite;
+    }
+    .loader:before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 15px;
+      height: 30px;
+      background: #FF3D00;
+      transform: skew(5deg , 60deg) translate(-50%, -5%);
+    }
+
+    .loader:after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FFF;
+      transform:translate(-50% , -50%);
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(45deg)}
+      30% , 50% , 70%  { transform: rotate(230deg)}
+      40% , 60% , 80% { transform: rotate(240deg)}
+      100% {  transform: rotate(245deg)}
+   }
 
 .footer {
     color: rgb(0, 0, 0);
@@ -193,12 +245,12 @@ body {
         position: fixed;
         top: 90px; 
         right: 0px;
-        width: 140px;
+        width: 190px;
         background: rgba(0, 0, 0, 0.9);
         border-radius: 8px;
         opacity: 0;
         max-height: 0;
-        overflow: hidden;
+        overflow: visible;
         transition: opacity 0.3s ease, max-height 0.3s ease;
         z-index: 101;
         display: flex;
@@ -227,7 +279,29 @@ body {
     .navbar a:hover {
         background: rgba(255, 255, 255, 0.2);
     }
-
+    .navbar span {
+        display: block;
+        padding: 12px;
+        font-size: 16px;
+        color: rgb(1, 1, 1);
+        text-align: left;
+        width: 100%;
+        transition: 0.3s;
+    }
+    .navbar span.active {
+        color: rgb(0, 0, 0);
+    }
+    .navbar span:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    .navbar .dropdown-menu {
+        overflow: visible; /* Prevent overflow from hiding content */
+    }
+    .navbar .dropdown-item {
+    white-space: nowrap; /* Prevent wrapping */
+    text-overflow: ellipsis; /* Add ellipsis for long text, if desired */
+    color: #222;
+}
     /* Hamburger Menu */
     .hamburger {
         display: flex;
