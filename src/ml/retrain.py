@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 import numpy as np
 import pickle
-import json
 import os
 import time
 import keyboard
@@ -40,72 +39,76 @@ def retrain_model():
 
         visit_matrix_new = []
         for user_id in user_ids_new:
-            row = []
-            for place in all_places:
-                count = visits_data[user_id].get("visits", {}).get(place, 0)
-                row.append(count)
+            row = [visits_data[user_id].get("visits", {}).get(place, 0) for place in all_places]
             visit_matrix_new.append(row)
 
         visit_df_new = pd.DataFrame(visit_matrix_new, index=user_ids_new, columns=all_places).fillna(0)
 
-        # === Samakan bentuk untuk perbandingan ===
-        visit_df_old_sorted = visit_df_old.reindex(index=visit_df_new.index, columns=visit_df_new.columns).fillna(0)
+        # === Gabungkan visit_df_old dan visit_df_new (overwrite jika ada user sama) ===
+        visit_df_combined = visit_df_old.copy()
+        visit_df_combined = visit_df_combined.reindex(columns=all_places).fillna(0)
+        visit_df_new = visit_df_new.reindex(columns=all_places).fillna(0)
+        visit_df_combined.update(visit_df_new)
 
-        # === Cek apakah ada perubahan ===
-        if visit_df_new.equals(visit_df_old_sorted):
-            print("⛔ Tidak ada data baru. Model tidak diretrain.")
-            return
+        # === Cek perubahan data kunjungan ===
+        visit_df_old_sorted = visit_df_old.reindex(index=visit_df_combined.index, columns=visit_df_combined.columns).fillna(0)
+        visit_df_changed = not visit_df_combined.sort_index(axis=1).equals(visit_df_old_sorted.sort_index(axis=1))
 
-        print("🔄 Melakukan retrain model karena ada data baru...")
+        if visit_df_changed:
+            print("➕ Perubahan pada data kunjungan (userVisits) ditemukan:")
+            print("Data Kunjungan Lama:\n", visit_df_old_sorted)
+            print("Data Kunjungan Baru:\n", visit_df_combined)
+        else:
+            print("⛔ Tidak ada perubahan signifikan pada data kunjungan (userVisits). Model tidak diretrain.")
 
-        # Gabungkan data lama dan baru
-        user_visits_dict = {}
-        for user_id, info in visits_data.items():
-            user_visits_dict[user_id] = info.get("visits", {})
-
-        combined_user_ids = set(user_ids_old) | set(user_visits_dict.keys())
-        combined_visit_matrix = []
-        combined_user_ids_list = []
-
-        for user_id in combined_user_ids:
-            row = []
-            for place in all_places:
-                count_old = visit_df_old.loc[user_id][place] if user_id in visit_df_old.index and place in visit_df_old.columns else 0
-                count_new = user_visits_dict.get(user_id, {}).get(place, 0)
-                row.append(count_old + count_new)
-            combined_visit_matrix.append(row)
-            combined_user_ids_list.append(user_id)
-
-        visit_df = pd.DataFrame(combined_visit_matrix, index=combined_user_ids_list, columns=all_places)
-
-        # Siapkan user attributes baru
-        user_attributes = {}
-        for user_id, row in attribute_df_old.iterrows():
-            user_attributes[user_id] = row.to_dict()
-
+        # === Siapkan attribute_df dari /api/users ===
+        user_attributes_new = {}
         for user in users_data:
             user_id = user.get("id", "")
             if user_id:
-                user_attributes[user_id] = {
+                user_attributes_new[user_id] = {
                     "age": user.get("age", 0),
                     "occupation": user.get("occupation", "Unknown"),
                     "marital_status": user.get("marital_status", "Unknown"),
                     "hobby": user.get("hobby", "Unknown")
                 }
 
-        attribute_df = pd.DataFrame.from_dict(user_attributes, orient='index').fillna('Unknown')
-        attribute_df = pd.get_dummies(attribute_df)
+        attribute_df_new = pd.DataFrame.from_dict(user_attributes_new, orient='index').fillna('Unknown')
+        attribute_df_encoded_new = pd.get_dummies(attribute_df_new)
+
+        # === Samakan struktur dengan attribute_df_old ===
+        attribute_df_encoded_new = attribute_df_encoded_new.reindex(columns=attribute_df_old.columns, fill_value=0)
+        attribute_df_encoded_old = attribute_df_old.reindex(index=attribute_df_encoded_new.index, fill_value=0)
+
+        # === Cek perubahan data atribut user ===
+        attribute_df_changed = not attribute_df_encoded_new.sort_index(axis=1).equals(attribute_df_encoded_old.sort_index(axis=1))
+
+        if attribute_df_changed:
+            print("📊 Terdeteksi perubahan pada atribut user.")
+        else:
+            print("⛔ Tidak ada perubahan pada atribut user (user data). Model tidak diretrain.")
+
+        if not visit_df_changed and not attribute_df_changed:
+            print("⛔ Tidak ada data baru yang relevan. Model tidak diretrain.")
+            print("=" * 100)
+            return
+
+        print("🔄 Melakukan retrain model...")
+
+        # === Final attribute_df (encoded) ===
+        attribute_df = attribute_df_encoded_new.sort_index()
+
+        # === Hitung similarity ===
         scaler = StandardScaler()
         scaled_attributes = scaler.fit_transform(attribute_df)
-
-        # Hitung similarity
-        user_similarity = cosine_similarity(visit_df)
         attribute_similarity = cosine_similarity(scaled_attributes)
+        user_similarity = cosine_similarity(visit_df_combined)
 
+        # === Simpan model baru ===
         new_model = {
-            "visit_df": visit_df,
+            "visit_df": visit_df_combined,
             "user_similarity": user_similarity,
-            "user_ids": combined_user_ids_list,
+            "user_ids": list(visit_df_combined.index),
             "places": all_places,
             "attribute_df": attribute_df,
             "attribute_similarity": attribute_similarity
@@ -115,17 +118,18 @@ def retrain_model():
             pickle.dump(new_model, model_file)
 
         print("✅ Model berhasil diperbarui dan disimpan.")
-
+        print("=" * 100)
     except Exception as e:
         print("❌ Terjadi error saat retrain:", e)
 
-# === Loop retrain tiap 5 menit ===
-print("🔁 Memulai retrain otomatis setiap 5 menit.")
+# === Loop retrain tiap 5 detik ===
+print("🔁 Memulai retrain otomatis setiap 5 detik.")
 print("⏹️ Tekan dan tahan tombol 'Delete' untuk menghentikan.\n")
 
 while True:
+    print("⏳ Memanggil retrain_model() pada:", time.strftime('%Y-%m-%d %H:%M:%S'))
     retrain_model()
-    for _ in range(300):  # 300 detik = 5 menit
+    for _ in range(5):  # 300 detik = 5 menit
         if keyboard.is_pressed("delete"):
             print("\n⛔ Dihentikan oleh pengguna (Delete ditekan).")
             exit()
