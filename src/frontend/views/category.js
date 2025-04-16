@@ -134,6 +134,7 @@ function initCategory() {
     } else {
         fetch_all_category();
     }
+    
 };
 
 export default initCategory;

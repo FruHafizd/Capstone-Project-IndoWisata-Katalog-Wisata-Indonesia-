@@ -1,15 +1,5 @@
-const api_top = "http://212.85.26.93:3000/api/wisata/top";
-const api_recom = "http://localhost:8000/recommendations";
+const api_top = "http://localhost:3000/api/wisata/top";
 
-const id = localStorage.getItem("id");
-
-const categoryMapping = {
-  "cat_LgHRkZdANPDP6ttv": "ALAM",
-  "cat_DLQ8lcmAe9GedORf": "KULINER",
-  "cat_NWLIqpq6cnjunZ5X": "SEJARAH",
-  "cat_oAsRjVBqyzmI-tBA": "KELUARGA",
-  "cat_QCJZ9eD5PbAbDIv4": "LAINNYA"
-};
 // Fungsi untuk mengonversi rating ke ikon bintang
 function convertRatingToStars(rating) {
   const numericRating = parseFloat(rating) || 0;
@@ -32,7 +22,7 @@ function render_all(data = []) {
   if (!container) return;
   
   if (data.length === 0) {
-    container.innerHTML = "<p>Tidak ada data wisata yang tersedia.</p>";
+    container.innerHTML = `<span class="loader"></span>`;
     return;
   }
 
@@ -89,29 +79,6 @@ async function fetch_top() {
     }
   }
 }
-async function fetch_recom() {
-  const container = document.querySelector('.grid-container');
-  if (container) {
-    container.innerHTML = `<span class="loader"></span>`;
-  }
-  
-  try {
-    const response = await fetch(`${api_recom}/${id}`);
-    if (!response.ok) {
-      throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
-    }
-    const result = await response.json();
-    if (result.status !== "success" || !result.data || !result.data.places) {
-      throw new Error("Format data tidak valid");
-    }
-    render_all(result.data.places);
-  } catch (error) {
-    console.error(error);
-    if (container) {
-      container.innerHTML = `<p>Gagal memuat data wisata. Error: ${error.message}</p>`;
-    }
-  }
-}
 
 // Fungsi untuk menginisialisasi Google Maps
 async function initMap() {
@@ -132,11 +99,7 @@ async function initMap() {
 function initHome() {
   // Panggil initMap dan fetch_top setelah DOM siap
   initMap();
-  if (id) {
-    fetch_top();
-  } else {
-    fetch_top();
-  }
+  fetch_top();
 }
 
 export default initHome;

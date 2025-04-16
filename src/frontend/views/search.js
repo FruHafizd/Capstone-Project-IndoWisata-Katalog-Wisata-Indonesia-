@@ -109,21 +109,35 @@ function render_all(data = []) {
   
 // Fungsi inisialisasi search
 function initSearch() {
-    // Tangani pencarian melalui form
     const form = document.querySelector('.search-container form');
+    const searchInput = document.querySelector('.search-box');
+    const searchBtn = document.querySelector('.search-btn');
+
+    // Toggle tombol saat input berubah
+    if (searchInput && searchBtn) {
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.trim() !== '') {
+                searchBtn.style.display = 'inline-block';
+            } else {
+                searchBtn.style.display = 'none';
+            }
+        });
+        
+    }
+
+    // Tangani pencarian
     if (form) {
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Mencegah submit default form
-            const searchQuery = document.querySelector('.search-box').value.trim();
+            e.preventDefault();
+            const searchQuery = searchInput.value.trim();
             if (searchQuery) {
                 await fetch_search(searchQuery);
             }
         });
     }
-    // Panggil fetch_all() saat inisialisasi agar data awal langsung tampil
+
     fetch_all();
-  
-    // Jika terdapat hamburger menu, pasang event listener (jika elemen tersebut ada di halaman search)
+
     const hamburger = document.querySelector(".hamburger");
     if (hamburger) {
         hamburger.addEventListener("click", function() {
@@ -134,5 +148,6 @@ function initSearch() {
         });
     }
 }
+
 
 export default initSearch;
