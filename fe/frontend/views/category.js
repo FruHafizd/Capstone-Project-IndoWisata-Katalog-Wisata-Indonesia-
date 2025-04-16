@@ -3,7 +3,7 @@ const category = urlParams.get('id'); // Ambil ID kategori dari URL
 
 // Base URL untuk endpoint kategori dan wisata berdasarkan kategori
 const api_categories = "http://212.85.26.93:3000/api/categories";
-const api_wisata_by_category = "http://localhost:3000/api/wisata/categories";
+const api_wisata_by_category = "http://212.85.26.93:3000/api/wisata/categories";
 
 const categoryImages = {
     "alam": "frontend/image/lava.webp",

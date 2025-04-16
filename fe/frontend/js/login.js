@@ -1,4 +1,4 @@
-const API_LOGIN_URL = 'http://localhost:3000/api/login';
+const API_LOGIN_URL = 'http://212.85.26.93:3000/api/login';
 
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem("token");

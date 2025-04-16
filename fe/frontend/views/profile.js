@@ -1,4 +1,4 @@
-const api_profile = "http://localhost:3000/api/users";
+const api_profile = "http://212.85.26.93:3000/api/users";
 const id = localStorage.getItem("id");
 
 async function fetch_profile() {
@@ -68,7 +68,7 @@ function render_edit_profile(data) {
     container.innerHTML = `
     <div class="profile-card">
         <div class="profile-container">
-            <img src="/src/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
+            <img src="/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
             <form id="edit-profile-form">
                 <div class="form-group">
                     <label>Name</label>

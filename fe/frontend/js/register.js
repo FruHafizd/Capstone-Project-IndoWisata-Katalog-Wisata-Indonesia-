@@ -1,5 +1,5 @@
 // Base URL untuk endpoint register user
-const API_USERS_URL = 'http://localhost:3000/api/users';
+const API_USERS_URL = 'http://212.85.26.93:3000/api/users';
 
 // Fungsi untuk menampilkan pesan error atau sukses
 function displayMessage(message, type = 'danger') {
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         displayMessage('Pendaftaran berhasil, silakan login!', 'success');
         setTimeout(() => {
-          window.location.href = '/src/login.html';
+          window.location.href = '/login.html';
         }, 1500);
       }
     })

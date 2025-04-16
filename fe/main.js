@@ -1,12 +1,12 @@
-import initCategory from '/fe/frontend/views/category.js';
-import initHome from '/fe/frontend/views/home.js';
-import initSearch from '/fe/frontend/views/search.js';
-import initDetail from '/fe/frontend/views/detail.js';
-import initprofile from '/fe/frontend/views/profile.js';
-import '/fe/frontend/js/userStatus.js';
-import '/fe/frontend/js/login.js';
-import '/fe/frontend/js/register.js';
-import init_reset from '/fe/frontend/views/reset.js';
+import initCategory from '/frontend/views/category.js';
+import initHome from '/frontend/views/home.js';
+import initSearch from '/frontend/views/search.js';
+import initDetail from '/frontend/views/detail.js';
+import initprofile from '/frontend/views/profile.js';
+import '/frontend/js/userStatus.js';
+import '/frontend/js/login.js';
+import '/frontend/js/register.js';
+import init_reset from '/frontend/views/reset.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   // Cek apakah user sudah login
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     token &&
     (window.location.pathname.includes("login.html") || window.location.pathname.includes("register.html"))
   ) {
-    window.location.href = "/src/index.html"; // Ubah sesuai kebutuhan
+    window.location.href = "index.html"; // Ubah sesuai kebutuhan
     return; // Hentikan eksekusi kode berikutnya
   }
 

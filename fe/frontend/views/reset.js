@@ -1,5 +1,5 @@
-const create_token = "http://localhost:3000/api/users/request-reset"
-const reset_password = "http://localhost:3000/api/users/reset-password"
+const create_token = "http://212.85.26.93:3000/api/users/request-reset"
+const reset_password = "http://212.85.26.93:3000/api/users/reset-password"
 
 
 function render_create_token (){

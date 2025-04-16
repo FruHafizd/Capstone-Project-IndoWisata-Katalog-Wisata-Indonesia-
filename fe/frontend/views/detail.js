@@ -3,7 +3,7 @@ const wisata = urlParams.get("id");
 
 
 // Endpoint API untuk detail wisata
-const api_detail = "http://localhost:3000/api/wisata";
+const api_detail = "http://212.85.26.93:3000/api/wisata";
 
 // Fungsi untuk mengupdate data user visit
 async function updateUserVisit(placeId) {
