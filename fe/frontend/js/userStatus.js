@@ -22,7 +22,7 @@ function updateUserStatus() {
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
       localStorage.removeItem("id");
-      window.location.href = "../fe/index.html";
+      window.location.href = "index.html";
     });
   } else {
     userStatus.innerHTML = `<a href="login.html">Login</a>`;
