@@ -133,9 +133,9 @@ function initHome() {
   // Panggil initMap dan fetch_top setelah DOM siap
   initMap();
   if (id) {
-    fetch_top();
-  } else {
     fetch_recom();
+  } else {
+    fetch_top();
   }
 }
 
