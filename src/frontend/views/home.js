@@ -1,5 +1,5 @@
 const api_top = "http://localhost:3000/api/wisata/top";
-const api_recom = "http://localhost:3000/api/"
+const api_recom = "http://localhost:8000/recommendations";
 
 const id = localStorage.getItem("id");
 
@@ -32,7 +32,7 @@ function render_all(data = []) {
   if (!container) return;
   
   if (data.length === 0) {
-    container.innerHTML = `<span class="loader"></span>`;
+    container.innerHTML = "<p>Tidak ada data wisata yang tersedia.</p>";
     return;
   }
 
@@ -69,7 +69,7 @@ function render_all(data = []) {
 async function fetch_top() {
   const container = document.querySelector('.grid-container');
   if (container) {
-    container.innerHTML = "<p>Memuat data wisata...</p>";
+    container.innerHTML = `<span class="loader"></span>`;
   }
   
   try {
@@ -92,11 +92,11 @@ async function fetch_top() {
 async function fetch_recom() {
   const container = document.querySelector('.grid-container');
   if (container) {
-    container.innerHTML = "<p>Memuat data wisata...</p>";
+    container.innerHTML = `<span class="loader"></span>`;
   }
   
   try {
-    const response = await fetch(`${api_recom}${id}`);
+    const response = await fetch(`${api_recom}/${id}`);
     if (!response.ok) {
       throw new Error(`Gagal mengambil data: ${response.status} ${response.statusText}`);
     }
@@ -132,10 +132,10 @@ async function initMap() {
 function initHome() {
   // Panggil initMap dan fetch_top setelah DOM siap
   initMap();
-  if (!id || id.trim() === "") {
+  if (id) {
     fetch_top();
   } else {
-    fetch_recom();
+    fetch_top();
   }
 }
 

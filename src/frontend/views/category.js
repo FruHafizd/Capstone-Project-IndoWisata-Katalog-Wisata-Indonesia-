@@ -57,7 +57,7 @@ async function fetch_all_category() {
 
 async function fetch_one_category(id) {
     const grid = document.getElementById("grid-container-category")
-    grid.innerHTML=`<p>Memuat content wisata...</p>`
+    grid.innerHTML=`<span class="loader"></span>`;
     try {
         const response = await fetch(`${api_wisata_by_category}/${id}`);
         if (!response.ok) {

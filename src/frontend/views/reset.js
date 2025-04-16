@@ -30,7 +30,7 @@ function render_create_token (){
         event.preventDefault();
         const email = document.getElementById("email").value.trim();
         if (!email){
-            alert("email harus diisi");
+            alert("email must be filled in");
             return;
         } 
         try {
@@ -44,16 +44,16 @@ function render_create_token (){
             // Cek apakah respons sukses
             if (response.ok) {
                 console.log("Token sudah terkirim, cek email Anda");
-                alert("Token berhasil dikirim! Silakan cek email Anda.");
+                alert("Token successfully sent! Please check your email.");
                 render_input_token();
                 
             } else {
                 console.error("Gagal mengirim token:", data.message);
-                alert(`Gagal mengirim token: ${data.message || "Terjadi kesalahan."}`);
+                alert(`Failed to send token: ${data.message || "There is an error."}`);
             }
         } catch (error) {
             console.error(`Ada error: ${error.message}`);
-            alert("Terjadi kesalahan saat mengirim token. Coba lagi nanti.");
+            alert("An error occurred while sending the token. Please try again later.");
         }
         
     })
@@ -97,7 +97,7 @@ function render_input_token() {
         const newPassword = document.getElementById("newpassword").value.trim();
         const token = document.getElementById("token").value.trim();
         if (!email || !newPassword || !token){
-            alert("data harus diisi");
+            alert("data must be filled in");
             return;
         } 
         try {
@@ -110,15 +110,15 @@ function render_input_token() {
             // Cek apakah respons sukses
             if (response.ok) {
                 console.log("Token sudah tervalidasi, password reset");
-                alert("Token sudah tervalidasi, password reset");
+                alert("Token has been validated");
                 window.location.href = "login.html"; // Redirect ke halaman login
             } else {
                 console.error("Gagal mereset password:", data.message);
-                alert(`Gagal mereset password: ${data.message || "Terjadi kesalahan."}`);
+                alert(`Failed to reset password: ${data.message || "Terjadi kesalahan."}`);
             }
         } catch (error) {
             console.error(`Ada error: ${error.message}`);
-            alert("Terjadi kesalahan saat mereset password. Coba lagi nanti.");
+            alert("An error occurred while resetting the password. Please try again later.");
         }
         
     })

@@ -16,7 +16,7 @@ const container = document.querySelector('#grid-container-search');
 
 // Fungsi untuk mengambil data hasil pencarian
 async function fetch_search(query) {
-    container.innerHTML = "<p>Mencari data wisata...</p>";
+    container.innerHTML = `<span class="loader"></span>`;
   
     try {
         const response = await fetch(`${api_search}?query=${encodeURIComponent(query)}`);
@@ -31,7 +31,7 @@ async function fetch_search(query) {
         render_all(result.data.places);
     } catch (error) {
         console.error(error);
-        container.innerHTML = `<p>Gagal memuat hasil pencarian. Error: ${error.message}</p>`;
+        container.innerHTML = `<p>Failed to load search results.</p>`;
     }
 }
   
@@ -51,7 +51,7 @@ async function fetch_all() {
         render_all(result.data.places);
     } catch (error) {
         console.error(error);
-        container.innerHTML = `<p>Gagal memuat data wisata. Error: ${error.message}</p>`;
+        container.innerHTML = `<p>Failed to load travel data.</p>`;
     }
 }
   
@@ -74,7 +74,7 @@ function convertRatingToStars(rating) {
 // Fungsi untuk merender data wisata ke dalam grid
 function render_all(data = []) {
     if (data.length === 0) {
-      container.innerHTML = "<p>Tidak ada data wisata yang tersedia.</p>";
+      container.innerHTML = "<p>No tourism data available.</p>";
       return;
     }
   
