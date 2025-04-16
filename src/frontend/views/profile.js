@@ -72,11 +72,11 @@ function render_edit_profile(data) {
             <form id="edit-profile-form">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" value="${data.name}" id="name">
+                    <div class="form-control">${data.name}</div>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" value="${data.email}" id="email">
+                    <div class="form-control">${data.email}</div>
                 </div>
                 <div class="form-group">
                     <label>Age</label>
