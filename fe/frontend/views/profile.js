@@ -1,4 +1,4 @@
-const api_profile = "http://212.85.26.93:3000/api/users";
+const api_profile = "http://srv793853.hstgr.cloud:3000/api/users";
 const id = localStorage.getItem("id");
 
 async function fetch_profile() {

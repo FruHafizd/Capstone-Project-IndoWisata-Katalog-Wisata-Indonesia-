@@ -1,6 +1,6 @@
 // Endpoint API
-const api_all = "http://212.85.26.93:3000/api/wisata";
-const api_search = "http://212.85.26.93:3000/api/wisata/search";
+const api_all = "http://srv793853.hstgr.cloud:3000/api/wisata";
+const api_search = "http://srv793853.hstgr.cloud:3000/api/wisata/search";
 
 // Mapping kategori: ubah sesuai dengan data kategori Anda
 const categoryMapping = {
