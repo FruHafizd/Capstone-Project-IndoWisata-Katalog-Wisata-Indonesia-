@@ -10,7 +10,7 @@ function updateUserStatus() {
           ${userName} <!-- Tampilkan nama dari localStorage -->
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="/src/profile.html">Profile</a></li>
+          <li><a class="dropdown-item" href="../fe/profile.html">Profile</a></li>
           <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
         </ul>
       </div>
@@ -22,10 +22,10 @@ function updateUserStatus() {
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
       localStorage.removeItem("id");
-      window.location.href = "/src/index.html";
+      window.location.href = "../fe/index.html";
     });
   } else {
-    userStatus.innerHTML = `<a href="/src/login.html">Login</a>`;
+    userStatus.innerHTML = `<a href="../fe/login.html">Login</a>`;
   }
 }
 
