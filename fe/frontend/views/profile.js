@@ -26,7 +26,7 @@ function render_profile(data) {
             <h1>My Profile</h1>
         </div>
         <div class="profile-container">
-            <img src="/src/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
+            <img src="/frontend/image/user.jpg" alt="Profile Picture" class="profile-image">
             <form>
                 <div class="form-group">
                     <label>Name</label>
