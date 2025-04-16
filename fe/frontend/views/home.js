@@ -1,5 +1,5 @@
 const api_top = "http://212.85.26.93:3000/api/wisata/top";
-const api_recom = "http://212.85.26.93:8000/recommendations";
+const api_recom = "http://212.85.26.93:3000:8000/recommendations"; //api machine learning
 
 const id = localStorage.getItem("id");
 
@@ -135,7 +135,7 @@ function initHome() {
   if (id) {
     fetch_top();
   } else {
-    fetch_top();
+    fetch_recom();
   }
 }
 
