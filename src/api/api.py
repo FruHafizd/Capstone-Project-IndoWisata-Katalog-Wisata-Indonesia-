@@ -1,177 +1,110 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import pickle
-import os
-import numpy as np
+from fastapi import FastAPI, HTTPException, Query
+import requests
+import joblib
 import pandas as pd
-import time
-from threading import Thread
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+import numpy as np
 
 app = FastAPI()
 
-# Middleware CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# === Load Models ===
+model_bcf_path = "src/ml/modelbcf.pkl"
+model_cf_path = "src/ml/modelcf.pkl"
 
-# === Global paths ===
-model_path = os.path.join(os.path.dirname(__file__), '../ml/model.pkl')
-csv_path = 'src/ml/datasets/wisata_indonesia.csv'
+knn_bcf, df_bcf = joblib.load(model_bcf_path)
+model_cf_bundle = joblib.load(model_cf_path)
 
-# === Global variables ===
-model = None
-visit_df = None
-user_similarity = None
-user_ids = None
-places = None
-attribute_df = None
-attribute_similarity = None
-wisata_df = None
-last_loaded_time = None
-last_modified_time = None
+knn_cf = model_cf_bundle["knn"]
+encoder_cf = model_cf_bundle["encoder"]
+user_ids_cf = model_cf_bundle["user_ids"]
+visit_data_cf = model_cf_bundle["visit_data"]
 
-# === Load model safely ===
-def load_model(retry=5, delay=1.0):
-    global model, visit_df, user_similarity, user_ids, places, attribute_df, attribute_similarity, wisata_df, last_loaded_time, last_modified_time
+# === Load Wisata Data ===
+wisata_df = pd.read_csv("src/ml/datasets/wisata_indonesia.csv")
 
-    for attempt in range(retry):
-        try:
-            file_size = os.path.getsize(model_path)
-            if file_size == 0:
-                raise ValueError("File model.pkl masih kosong, menunggu...")
-
-            with open(model_path, 'rb') as model_file:
-                model = pickle.load(model_file)
-
-            visit_df = model["visit_df"]
-            user_similarity = model["user_similarity"]
-            user_ids = model["user_ids"]
-            places = model["places"]
-            attribute_df = model["attribute_df"]
-            attribute_similarity = model["attribute_similarity"]
-
-            wisata_df = pd.read_csv(csv_path)
-
-            last_loaded_time = time.time()
-            last_modified_time = os.path.getmtime(model_path)
-
-            print("✅ Model dan CSV berhasil dimuat.")
-            return
-        except Exception as e:
-            print(f"⚠️ Gagal memuat model (percobaan ke-{attempt + 1}): {e}")
-            if attempt < retry - 1:
-                time.sleep(delay)
-            else:
-                raise e
-
-# === Initial load ===
-load_model()
-
-# === Watchdog: auto-reload if model changes ===
-class ModelFileHandler(FileSystemEventHandler):
-    def on_modified(self, event):
-        if os.path.abspath(event.src_path) == os.path.abspath(model_path):
-            print("🔁 Deteksi perubahan model.pkl, reload model di memori...")
-            try:
-                load_model()
-            except Exception as e:
-                print(f"❌ Gagal reload model: {e}")
-
-def start_watchdog():
-    event_handler = ModelFileHandler()
-    observer = Observer()
-    observer.schedule(event_handler, path=os.path.dirname(model_path), recursive=False)
-    observer.start()
-
-    print(f"📂 Monitoring {model_path} untuk perubahan...")
-    Thread(target=observer.join).start()
-
-start_watchdog()
-
-@app.get("/")
-def read_root():
-    return JSONResponse(content={"message": "🎉 IndoWisata API is running!"})
-
-@app.get("/status")
-def get_status():
-    return {
-        "status": "ok",
-        "last_loaded": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_loaded_time)) if last_loaded_time else None,
-        "last_modified": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_modified_time)) if last_modified_time else None,
-        "model_path": os.path.abspath(model_path)
-    }
-
-# === Endpoint rekomendasi ===
-@app.get("/recommendations/{user_id}")
-def get_recommendations(user_id: str, top_n: int = 15):
-    recommended_places = {}
-
-    if user_id in user_ids:
-        user_index = user_ids.index(user_id)
-        similarities = user_similarity[user_index]
-        similar_users_indices = np.argsort(similarities)[::-1][1:]
-
-        user_visited_places = set(visit_df.columns[visit_df.loc[user_id] > 0])
-
-        for idx in similar_users_indices:
-            other_user_id = user_ids[idx]
-            other_user_places = visit_df.loc[other_user_id]
-
-            for place_id, count in other_user_places.items():
-                if place_id not in user_visited_places and count > 0:
-                    if place_id not in recommended_places:
-                        recommended_places[place_id] = 0
-                    recommended_places[place_id] += count * similarities[idx]
-    else:
-        if user_id not in attribute_df.index:
-            raise HTTPException(status_code=404, detail="User ID tidak ditemukan di data atribut.")
-
-        user_index = attribute_df.index.get_loc(user_id)
-        similarities = attribute_similarity[user_index]
-        similar_users_indices = np.argsort(similarities)[::-1]
-
-        for idx in similar_users_indices:
-            other_user_id = attribute_df.index[idx]
-            if other_user_id in visit_df.index:
-                other_user_places = visit_df.loc[other_user_id]
-                for place_id, count in other_user_places.items():
-                    if count > 0:
-                        if place_id not in recommended_places:
-                            recommended_places[place_id] = 0
-                        recommended_places[place_id] += count * similarities[idx]
-
-    sorted_recommendations = sorted(recommended_places.items(), key=lambda x: x[1], reverse=True)
-    top_recommendations = [place for place, score in sorted_recommendations[:top_n]]
-
-    recommended_places_detail = []
-    for place_id in top_recommendations:
-        place_info = wisata_df[wisata_df["name"] == place_id]
-
-        if not place_info.empty:
-            tempat = {
-                "id": place_info["id"].values[0],
-                "name": place_info["name"].values[0],
-                "category_id": place_info["category_id"].values[0],
-                "address": place_info["address"].values[0],
-                "rating": place_info["rating"].values[0],
-                "location": place_info["location"].values[0],
-                "image_url": place_info["image_url"].values[0],
-            }
-            recommended_places_detail.append(tempat)
-        else:
-            print(f"⚠️ Tempat '{place_id}' tidak ditemukan dalam CSV.")
-
+# === Helper to Format Response ===
+def format_recommendation_response(place_names, n, user_name, user_id):
+    matched_places = wisata_df[wisata_df["name"].isin(place_names)]
+    places_output = []
+    for name in place_names:
+        row = matched_places[matched_places["name"] == name]
+        if not row.empty:
+            place_data = row.iloc[0]
+            places_output.append({
+                "id": place_data["id"],
+                "name": place_data["name"],
+                "category_id": place_data["category_id"],
+                "address": place_data["address"],
+                "rating": str(place_data["rating"]),
+                "location": eval(place_data["location"]),
+                "image_url": place_data["image_url"]
+            })
     return {
         "status": "success",
-        "message": f"Top rekomendasi untuk {user_id}",
+        "message": f"Rekomendasi untuk {user_name} ({user_id})",
         "data": {
-            "places": recommended_places_detail
+            "places": places_output
         }
     }
+
+@app.get("/recommendations/")
+def get_recommendations(user_id: str = Query(...), n_neighbors: int = 3, n_recommendations: int = 15):
+    # Ambil data eksternal
+    users_api = "http://localhost:3000/api/users"
+    visits_api = "http://localhost:3000/api/userVisits"
+
+    try:
+        users_response = requests.get(users_api).json()["data"]["users"]
+        visits_response = requests.get(visits_api).json()["data"]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal mengambil data eksternal: {str(e)}")
+
+    user_data = next((u for u in users_response if u["id"] == user_id), None)
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan.")
+
+    user_name = user_data["name"]
+
+    if user_id in visits_response and visits_response[user_id].get("visits"):
+        # === Gunakan model BCF ===
+        new_user_visits = visits_response[user_id]["visits"]
+        new_user_df = pd.DataFrame([new_user_visits])
+        new_user_df = new_user_df.reindex(columns=df_bcf.columns, fill_value=0)
+
+        distances, indices = knn_bcf.kneighbors(new_user_df, n_neighbors=n_neighbors)
+        visited_places = set(new_user_visits.keys())
+        recommendation_scores = {}
+
+        for user_sim in [df_bcf.index[i] for i in indices[0]]:
+            for place, count in df_bcf.loc[user_sim].items():
+                if place not in visited_places and count > 0:
+                    recommendation_scores[place] = recommendation_scores.get(place, 0) + count
+
+        sorted_recommendations = sorted(recommendation_scores.items(), key=lambda x: x[1], reverse=True)
+        top_places = [place for place, _ in sorted_recommendations[:n_recommendations]]
+        return format_recommendation_response(top_places, n_recommendations, user_name, user_id)
+
+    else:
+        # === Gunakan model CF ===
+        profile = {
+            "age": user_data["age"],
+            "occupation": user_data["occupation"],
+            "marital_status": user_data["marital_status"],
+            "hobby": user_data["hobby"]
+        }
+
+        user_df = pd.DataFrame([profile])
+        encoded = encoder_cf.transform(user_df[["occupation", "marital_status", "hobby"]]).toarray()
+        features = np.hstack([user_df["age"].values.reshape(-1, 1), encoded])
+
+        distances, indices = knn_cf.kneighbors(features, n_neighbors=n_neighbors)
+        recommended_places = {}
+
+        for idx in indices[0]:
+            similar_user_id = user_ids_cf[idx]
+            visits = visit_data_cf.get(similar_user_id, {}).get("visits", {})
+            for place, count in visits.items():
+                recommended_places[place] = recommended_places.get(place, 0) + count
+
+        sorted_places = sorted(recommended_places.items(), key=lambda x: x[1], reverse=True)
+        top_places = [place for place, _ in sorted_places[:n_recommendations]]
+        return format_recommendation_response(top_places, n_recommendations, user_name, user_id)
