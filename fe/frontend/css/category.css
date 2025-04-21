@@ -18,10 +18,13 @@ body {
     left: 0;
     width: 100%;
     padding: 15px 20px;
-    background: rgba(0, 0, 0, 0);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: rgba(0, 0, 0, 0.2); 
+    backdrop-filter: blur(10px);          
+    -webkit-backdrop-filter: blur(10px);  
+    border-radius: 0px 0px 10px 10px;}
     z-index: 1000;
 }
 
